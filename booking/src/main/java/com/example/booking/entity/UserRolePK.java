@@ -12,7 +12,7 @@ import java.io.Serializable;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(of = {"user, role"})
+@EqualsAndHashCode(of = {"user", "role"})
 public class UserRolePK implements Serializable {
     private String user;
     private String role;

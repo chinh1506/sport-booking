@@ -1,7 +1,17 @@
 package com.example.booking.entity;
 
+import lombok.Getter;
+
+@Getter
 public enum BookingStatus {
-    CANCEL,
-    BOOKED,
-    COMPLETE
+    CONFIRMED("CONFIRMED"),
+    PENDING("PENDING"),
+    CANCELLED("CANCELLED"),
+    COMPLETED("COMPLETED");
+
+    private final String status;
+
+    private BookingStatus(String status) {
+        this.status = status;
+    }
 }

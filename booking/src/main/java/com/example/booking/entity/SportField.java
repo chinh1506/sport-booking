@@ -1,13 +1,13 @@
 package com.example.booking.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+@EqualsAndHashCode(callSuper = true)
 @Table(name = "sport_fields")
 @Entity
 @Data
@@ -17,9 +17,11 @@ public class SportField extends SuperEntity {
     private String name;
 
     private String description;
+    @Enumerated(EnumType.STRING)
     private FieldType type;
     @ManyToOne
     @JoinColumn(name = "sport_complex_id")
+    @JsonBackReference
     private SportComplex sportComplex;
 
 
