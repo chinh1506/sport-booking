@@ -18,25 +18,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("auth")
 public class AuthController {
-    private AuthService authService;
+    private final AuthService authService;
 
     public AuthController(AuthService authService) {
         this.authService = authService;
     }
 
-//    @PostMapping("/login")
-//    public String getAll(@Valid @RequestBody UserLoginDTO account) {
-//        var user = this.authService.login(account.getUsername(), account.getPassword());
-//        return "login";
-//    }
 
-//    @PostMapping(value = "/exchange-token")
-//    @PermitAll
-//    public ResponseEntity<RestResponse<?>> getActiveProfile(@Valid @RequestBody TokenParamRequest tokenRequestParam) throws IllegalAccessException {
-//        ExchangeTokenResponse o = keycloakClient.exchangeToken(TokenParamRequest.getMap(tokenRequestParam));
-//        System.out.println(o);
-//        return ResponseEntity.ok(RestResponse.builder().data(o).build());
-//    }
     @PostMapping(value = "/register")
     public ResponseEntity<RestResponse<?>> register(@Valid @RequestBody RegisterUserRequest registerUserDTO) throws IllegalAccessException {
         Object registerUser = authService.register(registerUserDTO);

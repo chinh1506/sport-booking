@@ -16,6 +16,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -24,7 +25,7 @@ import java.util.Date;
 @Data
 @MappedSuperclass
 @EqualsAndHashCode(of = "id")
-public abstract class SuperEntity {
+public abstract class SuperEntity  {
     @Id
 //    @GeneratedValue(generator = "GenerateID")
 //    @GenericGenerator(name = "GenerateID", type = GenerateID.class)

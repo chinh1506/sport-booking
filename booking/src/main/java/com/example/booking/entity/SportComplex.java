@@ -1,5 +1,6 @@
 package com.example.booking.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -29,12 +30,11 @@ public class SportComplex extends SuperEntity{
     private LocalTime closeTime;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    @JsonManagedReference
-    private User user;
+    @JoinColumn(name = "owner_id")
+    @JsonManagedReference("sportComplex_owner")
+    private User owner;
 
     @OneToMany(mappedBy = "sportComplex")
+    @JsonBackReference()
     private List<SportField> sportFields;
-
-
 }

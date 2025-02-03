@@ -21,6 +21,6 @@ public class Role extends SuperEntity{
     private String name;
 
     @OneToMany(mappedBy = "role")
-    @JsonBackReference
+    @JsonBackReference("role")
     private Set<UserRole> userRoles;
 }

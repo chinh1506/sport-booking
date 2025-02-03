@@ -40,6 +40,7 @@ public class AuthServiceImpl implements AuthService {
         String userId=null;
         try {
             User user = objectMapper.convertValue(registerUserRequest, User.class);
+            log.info("{}", user);
             RegisterUserParam registerUserParam = RegisterUserParam.builder()
                     .email(registerUserRequest.getEmail())
                     .username(registerUserRequest.getEmail())
@@ -57,9 +58,9 @@ public class AuthServiceImpl implements AuthService {
             return this.userRepository.save(user);
         } catch (Exception e) {
             log.debug(e.getMessage());
-            if(!(e instanceof FeignException)){
-                this.keycloakClient.deleteUserById(userId);
-            }
+//            if(!(e instanceof FeignException)){
+//                this.keycloakClient.deleteUserById(userId);
+//            }
             throw new RuntimeException(e);
         }
 

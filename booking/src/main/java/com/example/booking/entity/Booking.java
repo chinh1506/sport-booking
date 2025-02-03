@@ -2,10 +2,7 @@ package com.example.booking.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -15,6 +12,8 @@ import java.time.LocalTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
+@Builder
+@ToString(exclude = {"customer","sportField"})
 @Entity
 @Table(name = "bookings")
 public class Booking extends SuperEntity  {
@@ -36,6 +35,11 @@ public class Booking extends SuperEntity  {
     @JoinColumn(name = "sport_field_id")
     @JsonManagedReference
     private SportField sportField;
+
+    @ManyToOne
+    @JoinColumn(name = "customer_id")
+    @JsonManagedReference("booking_customer")
+    private User customer;
 
 }
 

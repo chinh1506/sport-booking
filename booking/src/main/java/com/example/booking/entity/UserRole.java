@@ -18,13 +18,13 @@ public class UserRole implements Serializable {
     @Id
     @ManyToOne
     @JoinColumn(name = "user_id")
-    @JsonManagedReference
+    @JsonManagedReference(value = "user_role")
     private User user;
 
     @Id
     @ManyToOne
     @JoinColumn(name = "role_id")
-    @JsonManagedReference
+    @JsonManagedReference("role")
     private Role role;
 
 
