@@ -1,12 +1,14 @@
 package com.example.booking.controller;
 
 import com.example.booking.dto.booking.BookingResponse;
+import com.example.booking.dto.booking.CreateBookingRequest;
 import com.example.booking.entity.Booking;
 import com.example.booking.service.BookingService;
 import com.example.booking.util.RestResponse;
 import com.example.booking.util.filterparam.BookingParam;
 import com.example.booking.util.filterparam.SortOrder;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
@@ -28,9 +30,9 @@ public class BookingController {
     }
 
     @GetMapping()
-    public RestResponse getAll(@RequestParam LocalDate startDate,
+    public RestResponse getAll(@RequestParam(required = false) LocalDate startDate,
                                @RequestParam(defaultValue = "0") int page,
-                               @RequestParam(defaultValue ="10" ) int limit,
+                               @RequestParam(defaultValue = "10") int limit,
                                @RequestParam(defaultValue = "createdAt") String orderBy,
                                @RequestParam(defaultValue = "DESCENDING") SortOrder order) {
 
@@ -52,10 +54,16 @@ public class BookingController {
         return RestResponse.success(bookings);
     }
 
-    @PostMapping("/fields")
-    public Booking bookField() {
-        Booking bookings = this.bookingService.bookingField(null, null, null, null, null, null);
-        return bookings;
+    @PostMapping()
+    public BookingResponse bookField(@Valid @RequestBody CreateBookingRequest createBookingRequest) throws Exception {
+        Booking booking = this.bookingService.bookingField(createBookingRequest.getFieldId()
+                , createBookingRequest.getStartDate()
+                , null
+                , createBookingRequest.getStartTime()
+                , createBookingRequest.getEndTime()
+                , createBookingRequest.getEmail());
+        return objectMapper.convertValue(booking, BookingResponse.class);
+//        return booking;
     }
 
 }

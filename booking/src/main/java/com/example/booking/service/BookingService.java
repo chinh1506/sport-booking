@@ -9,6 +9,6 @@ import java.time.LocalTime;
 
 public interface BookingService {
     Page<Booking> getAll(BookingParam filterParam);
-    Booking bookingField(String fieldId, LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime, String userId);
+    Booking bookingField(String fieldId, LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime, String userId) throws Exception;
 //    List<Booking> findByStartDateAnd(LocalDate startDate);
 }

@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GeneratedColumn;
 import org.hibernate.annotations.GenericGenerator;
@@ -25,6 +26,7 @@ import java.util.Date;
 @Data
 @MappedSuperclass
 @EqualsAndHashCode(of = "id")
+@SuperBuilder
 public abstract class SuperEntity  {
     @Id
 //    @GeneratedValue(generator = "GenerateID")
