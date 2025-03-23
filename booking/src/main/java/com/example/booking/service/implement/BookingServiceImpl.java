@@ -58,13 +58,10 @@ public class BookingServiceImpl implements BookingService {
                 .sportField(SportField.builder().id(fieldId).build())
                 .build();
 
-
         List<Booking> bookingFound = this.bookingRepository.findFieldByTimeAndFieldId(fieldId, startDate, startTime, endTime);
         if (bookingFound != null && !bookingFound.isEmpty()) {
-//            log.info(bookingFound.size()+"");
             throw new Exception("This field not available in this time.");
         }
-//        Optional<FieldPrice> price = this.fieldPriceRepository.findById(1L);
         List<FieldPrice> fieldPrices = new ArrayList<>();
 
         while (!endTime.equals(startTime)) {
@@ -74,11 +71,6 @@ public class BookingServiceImpl implements BookingService {
         }
         log.info("{}", fieldPrices);
         booking.setTotalPrice(fieldPrices.stream().map(FieldPrice::getPrice).reduce(0.00, Double::sum) / 2);
-
-
-
-
         return this.bookingRepository.save(booking);
-//        return booking;
     }
 }

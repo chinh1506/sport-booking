@@ -31,5 +31,4 @@ public class AuthController {
         System.out.println(registerUser);
         return ResponseEntity.ok(RestResponse.builder().data(registerUser).build());
     }
-
 }

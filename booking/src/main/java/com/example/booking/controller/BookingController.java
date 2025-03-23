@@ -11,6 +11,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -64,6 +66,17 @@ public class BookingController {
                 , createBookingRequest.getEmail());
         return objectMapper.convertValue(booking, BookingResponse.class);
 //        return booking;
+    }
+    @MessageMapping("/fields")
+    @SendTo("/topic/fields")
+    public BookingResponse bookingFieldRealtime(@Valid @RequestBody CreateBookingRequest createBookingRequest) throws Exception {
+        Booking booking = this.bookingService.bookingField(createBookingRequest.getFieldId()
+                , createBookingRequest.getStartDate()
+                , null
+                , createBookingRequest.getStartTime()
+                , createBookingRequest.getEndTime()
+                , createBookingRequest.getEmail());
+        return objectMapper.convertValue(booking, BookingResponse.class);
     }
 
 }

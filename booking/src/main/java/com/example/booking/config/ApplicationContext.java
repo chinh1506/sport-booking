@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -13,13 +14,11 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.security.PublicKey;
 
-@Configurable
-@EnableJpaAuditing
-@EnableJpaRepositories
-@EnableTransactionManagement
+@Configuration
+//@EnableJpaAuditing
+//@EnableJpaRepositories
+//@EnableTransactionManagement
 public class ApplicationContext {
-
-
 
 
 //    @Bean
@@ -39,5 +38,6 @@ public class ApplicationContext {
     public ObjectMapper objectMapper() {
         return new ObjectMapper();
     }
+
 
 }

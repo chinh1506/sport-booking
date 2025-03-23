@@ -21,7 +21,7 @@ import java.util.List;
 public class SportComplex extends SuperEntity{
     private String name;
     private String description;
-    private String address;
+//    private String address;
     @Column(name = "open_time")
     private LocalTime openTime;
     @Column(name = "close_time")
@@ -35,4 +35,8 @@ public class SportComplex extends SuperEntity{
     @OneToMany(mappedBy = "sportComplex")
     @JsonBackReference()
     private List<SportField> sportFields;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "address_id", referencedColumnName = "id")
+    private Address address;
 }
