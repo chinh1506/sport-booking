@@ -1,6 +1,10 @@
 package com.example.booking.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -15,9 +19,9 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import java.security.PublicKey;
 
 @Configuration
-//@EnableJpaAuditing
-//@EnableJpaRepositories
-//@EnableTransactionManagement
+@EnableJpaAuditing
+@EnableJpaRepositories(basePackages = {"com.example.booking.repository"})
+@EnableTransactionManagement
 public class ApplicationContext {
 
 
@@ -36,7 +40,18 @@ public class ApplicationContext {
 
     @Bean
     public ObjectMapper objectMapper() {
-        return new ObjectMapper();
+            ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+            return objectMapper;
+    }
+
+    @Bean
+    public ModelMapper modelMapper() {
+        ModelMapper modelMapper = new ModelMapper();
+        modelMapper.getConfiguration()
+                .setMatchingStrategy(MatchingStrategies.STRICT);
+        return modelMapper;
     }
 
 

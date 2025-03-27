@@ -2,6 +2,7 @@ import StoreProvider from "@/components/StoreProvider";
 import "./globals.css";
 import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
+import { Session } from "next-auth";
 
 const roboto = Roboto({
     subsets: ["latin"],
@@ -15,7 +16,7 @@ export const metadata: Metadata = {
         "Download Tailwind Blog Post Page, a free webpage template developed by Creative Tim. Based on Tailwind CSS and Material Tailwind, see the live demo on our site and elevate your blogging experience!",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({ children,session }: { children: React.ReactNode,session:Session }) {
     return (
         <html lang="en">
             <head>
@@ -45,7 +46,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <script src="/js/index.js"></script>
             </head>
             <body className={roboto.className}>
-                <StoreProvider>{children}</StoreProvider>
+                <StoreProvider session={session}>{children}</StoreProvider>
             </body>
         </html>
     );

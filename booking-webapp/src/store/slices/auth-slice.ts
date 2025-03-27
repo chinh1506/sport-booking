@@ -16,7 +16,7 @@ const initialState: UserState = {
     loading: false
 };
 
-export const counterSlice = createSlice({
+export const authSlice = createSlice({
     name: "auth",
     initialState,
     reducers: {
@@ -38,6 +38,6 @@ export const loadUserAction = createAsyncThunk("auth/loadUser", (_, thunkApi) =>
 });
 
 // Action creators are generated for each case reducer function 
-export const { login, logout } = counterSlice.actions;
+export const { login, logout } = authSlice.actions;
 
-export default counterSlice.reducer;
+export default authSlice.reducer;

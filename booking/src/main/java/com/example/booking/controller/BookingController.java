@@ -10,6 +10,7 @@ import com.example.booking.util.filterparam.SortOrder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -24,15 +25,16 @@ import java.util.Map;
 @RequestMapping("/bookings")
 public class BookingController {
     private final BookingService bookingService;
-    private final ObjectMapper objectMapper;
+    private ModelMapper modelMapper ;
 
-    public BookingController(BookingService bookingService, ObjectMapper objectMapper) {
+
+    public BookingController(BookingService bookingService, ModelMapper modelMapper ) {
         this.bookingService = bookingService;
-        this.objectMapper = objectMapper;
+        this.modelMapper = modelMapper;
     }
 
     @GetMapping()
-    public RestResponse getAll(@RequestParam(required = false) LocalDate startDate,
+    public Object getAll(@RequestParam(required = false) LocalDate startDate,
                                @RequestParam(defaultValue = "0") int page,
                                @RequestParam(defaultValue = "10") int limit,
                                @RequestParam(defaultValue = "createdAt") String orderBy,
@@ -49,11 +51,13 @@ public class BookingController {
 
         Page<Booking> bookings = this.bookingService.getAll(params);
 
-//        List<BookingResponse> bookingsRes = bookings.stream()
-//                .map(o -> objectMapper.convertValue(o, BookingResponse.class))
-//                .toList();
+        log.info("bookings count: {}", bookings.getTotalElements());
+        List<BookingResponse> bookingsRes = bookings.stream()
+                .map(o -> modelMapper.map(o, BookingResponse.class))
+                .toList();
 
-        return RestResponse.success(bookings);
+        return RestResponse.success(bookingsRes);
+//        return bookings;
     }
 
     @PostMapping()
@@ -64,8 +68,8 @@ public class BookingController {
                 , createBookingRequest.getStartTime()
                 , createBookingRequest.getEndTime()
                 , createBookingRequest.getEmail());
-        return objectMapper.convertValue(booking, BookingResponse.class);
-//        return booking;
+
+        return modelMapper.map(booking, BookingResponse.class);
     }
     @MessageMapping("/fields")
     @SendTo("/topic/fields")
@@ -76,7 +80,7 @@ public class BookingController {
                 , createBookingRequest.getStartTime()
                 , createBookingRequest.getEndTime()
                 , createBookingRequest.getEmail());
-        return objectMapper.convertValue(booking, BookingResponse.class);
+        return modelMapper.map(booking, BookingResponse.class);
     }
 
 }

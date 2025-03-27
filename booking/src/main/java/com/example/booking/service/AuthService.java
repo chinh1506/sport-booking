@@ -8,5 +8,6 @@ import com.example.booking.entity.User;
 public interface AuthService {
 
     Object register(RegisterUserRequest registerUserRequest) throws IllegalAccessException;
+    Object refreshToken(String refreshToken) ;
 //    ExchangeTokenResponse exchangeToken(TokenParamRequest tokenParamRequest);
 }

@@ -26,7 +26,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationEntryPoint authenticationEntryPoint) throws Exception {
         final String[] PUBLIC_ENPOINT = {
-//                "/bookings/**",
+                "/bookings/**",
                 "/auth/register",
                 "/auth/exchange-token",
                 "/ws/**"

@@ -13,7 +13,7 @@ public class RestResponse<T> {
     private Object message;
     private T data;
 
-    public static <T> RestResponse<T> success(T data) {
+    public static <A> RestResponse<A> success(A data) {
         return new RestResponse<>("success", 200, null, null, data);
     }
 

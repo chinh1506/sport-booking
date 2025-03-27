@@ -13,6 +13,7 @@ import java.util.Map;
 
 @FeignClient(name = "keycloak-service", url = "http://localhost:8000")
 public interface KeycloakClient {
+
     @PostMapping(value = "/realms/myspringapp/protocol/openid-connect/token"
             , consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     ExchangeTokenResponse exchangeToken(@QueryMap Map<?, ?> queryMap);
@@ -30,8 +31,6 @@ public interface KeycloakClient {
     //GET /admin/realms/{realm}/users/{user-id}
     @GetMapping("/admin/realms/myspringapp/users/{userId}")
     Object  getUserById(@PathVariable String userId);
-
-
 
 }
 

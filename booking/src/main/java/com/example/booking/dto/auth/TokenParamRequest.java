@@ -15,13 +15,14 @@ import java.util.Map;
 @AllArgsConstructor
 @Builder
 public class TokenParamRequest {
-    @NotBlank(message = "grant_type can't be blank")
+//    @NotBlank(message = "grant_type can't be blank")
     private String grantType;
-    @NotBlank(message = "client_id can't be blank")
+//    @NotBlank(message = "client_id can't be blank")
     private String clientId;
-    @NotBlank(message = "client_secret can't be blank")
+//    @NotBlank(message = "client_secret can't be blank")
     private String clientSecret;
     private String scope;
+    private String refreshToken;
 
 
     public static Map<String, String> getMap(TokenParamRequest tokenRequestParam) throws IllegalAccessException {
