@@ -5,6 +5,8 @@ import { deleteCookie, getCookie, setCookie } from "cookies-next";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 const URLS_TO_IGNORE: any[] = ["/auth/login", "/auth/register"];
+console.log("BASE URL",BASE_URL);
+
 
 const axiosClient = axios.create({
     baseURL: BASE_URL,

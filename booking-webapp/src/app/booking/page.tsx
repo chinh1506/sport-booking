@@ -8,6 +8,7 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import { useEffect, useState } from "react";
 import { v4 } from "uuid";
 import { stompClient } from "../Utils";
+import { bookingService } from "@/api";
 
 type CustomEventInput = EventInput & {
     userId?: string;
@@ -19,11 +20,23 @@ function BookingPage() {
     const [objectSelected, setObjectSelected] = useState<UserSelected>({});
     const [events, setEvents] = useState<CustomEventInput[]>([]);
 
+    const fetchBooking = async () => {
+        try {
+            const bookingRes = await bookingService.getAll();
+            console.log(bookingRes);
+
+
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
     useEffect(() => {
         if (!stompClient.active) {
             stompClient.activate();
         }
-        
+        fetchBooking();
+
         return () => {
             stompClient.deactivate();
         };
@@ -37,9 +50,6 @@ function BookingPage() {
         setOpen(false);
     };
 
-    // events.reduce((prevE,currE,index)=>{
-    //     currE
-    // },[])
 
     return (
         <div className="container ">

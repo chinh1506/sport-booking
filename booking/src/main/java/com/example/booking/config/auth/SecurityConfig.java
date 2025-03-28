@@ -52,18 +52,19 @@ public class SecurityConfig {
 
     }
 
-//    @Bean
-//    public UrlBasedCorsConfigurationSource corsConfigurationSource() {
-//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//        CorsConfiguration config = new CorsConfiguration();
-//        config.addAllowedHeader("*");
-//        config.addAllowedMethod("*");
-////        config.addAllowedOrigin("*");
-//
-//        config.addAllowedOriginPattern("*");
-//        source.registerCorsConfiguration("/**", config);
-//        return source;
-//    }
+    @Bean
+    public UrlBasedCorsConfigurationSource corsConfigurationSource() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration config = new CorsConfiguration();
+        config.addAllowedHeader("*");
+        config.addAllowedMethod("*");
+//        config.addAllowedOrigin("*");
+        config.setAllowCredentials(true);
+
+        config.addAllowedOriginPattern("*");
+        source.registerCorsConfiguration("/**", config);
+        return source;
+    }
 
 
 }

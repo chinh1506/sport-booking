@@ -18,6 +18,7 @@ public class BookingResponse {
     private LocalTime endTime;
     private Double totalPrice;
     private BookingStatus status;
+
     private FieldResponse sportField;
 
 }
