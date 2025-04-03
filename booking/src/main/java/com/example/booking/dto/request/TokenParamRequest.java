@@ -1,6 +1,7 @@
-package com.example.booking.dto.auth;
+package com.example.booking.dto.request;
 
-import jakarta.validation.constraints.NotBlank;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,12 +15,10 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+//@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class TokenParamRequest {
-//    @NotBlank(message = "grant_type can't be blank")
     private String grantType;
-//    @NotBlank(message = "client_id can't be blank")
     private String clientId;
-//    @NotBlank(message = "client_secret can't be blank")
     private String clientSecret;
     private String scope;
     private String refreshToken;

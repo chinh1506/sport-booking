@@ -3,6 +3,7 @@ import "./globals.css";
 import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 import { Session } from "next-auth";
+import MySessionProvider from "@/components/MySessionProvider";
 
 const roboto = Roboto({
     subsets: ["latin"],
@@ -46,7 +47,10 @@ export default function RootLayout({ children,session }: { children: React.React
                 <script src="/js/index.js"></script>
             </head>
             <body className={roboto.className}>
-                <StoreProvider session={session}>{children}</StoreProvider>
+                <MySessionProvider session={session}>
+                <StoreProvider >{children}</StoreProvider>
+                </MySessionProvider>
+                
             </body>
         </html>
     );

@@ -6,7 +6,6 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @EqualsAndHashCode(callSuper = true)
@@ -14,7 +13,7 @@ import java.time.LocalTime;
 @AllArgsConstructor
 @Data
 @SuperBuilder
-@ToString(exclude = {"customer","sportField"})
+@ToString(exclude = {"customer","court"})
 @Entity
 @Table(name = "bookings")
 public class Booking extends SuperEntity  {
@@ -33,9 +32,9 @@ public class Booking extends SuperEntity  {
     private BookingStatus status;
 
     @ManyToOne
-    @JoinColumn(name = "sport_field_id")
+    @JoinColumn(name = "court_id")
     @JsonManagedReference
-    private SportField sportField;
+    private Court court;
 
     @ManyToOne
     @JoinColumn(name = "customer_id")

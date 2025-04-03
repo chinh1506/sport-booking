@@ -1,11 +1,9 @@
-package com.example.booking.dto.booking;
+package com.example.booking.dto.response;
 
 import com.example.booking.entity.BookingStatus;
-import com.example.booking.entity.SportField;
 import lombok.Data;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Date;
 
@@ -19,6 +17,6 @@ public class BookingResponse {
     private Double totalPrice;
     private BookingStatus status;
 
-    private FieldResponse sportField;
+    private CourtResponse sportField;
 
 }

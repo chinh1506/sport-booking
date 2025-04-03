@@ -2,7 +2,7 @@ package com.example.booking.service.implement;
 
 import com.example.booking.entity.*;
 import com.example.booking.repository.BookingRepository;
-import com.example.booking.repository.FieldPriceRepository;
+import com.example.booking.repository.CourtPriceRepository;
 import com.example.booking.service.BookingService;
 import com.example.booking.util.Utilities;
 import com.example.booking.util.filterparam.BookingParam;
@@ -14,20 +14,18 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Slf4j
 public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
-    private final FieldPriceRepository fieldPriceRepository;
+    private final CourtPriceRepository fieldPriceRepository;
 
-    public BookingServiceImpl(BookingRepository bookingRepository, FieldPriceRepository fieldPriceRepository) {
+    public BookingServiceImpl(BookingRepository bookingRepository, CourtPriceRepository fieldPriceRepository) {
         this.bookingRepository = bookingRepository;
         this.fieldPriceRepository = fieldPriceRepository;
     }
@@ -55,22 +53,22 @@ public class BookingServiceImpl implements BookingService {
                 .startTime(startTime)
                 .endTime(endTime)
                 .status(BookingStatus.PENDING)
-                .sportField(SportField.builder().id(fieldId).build())
+                .court(Court.builder().id(fieldId).build())
                 .build();
 
         List<Booking> bookingFound = this.bookingRepository.findFieldByTimeAndFieldId(fieldId, startDate, startTime, endTime);
         if (bookingFound != null && !bookingFound.isEmpty()) {
             throw new Exception("This field not available in this time.");
         }
-        List<FieldPrice> fieldPrices = new ArrayList<>();
+        List<CourtPrice> fieldPrices = new ArrayList<>();
 
         while (!endTime.equals(startTime)) {
             endTime = endTime.minusMinutes(30);
-            FieldPrice fieldPrice = this.fieldPriceRepository.findFieldPriceByStartTime(endTime);
+            CourtPrice fieldPrice = this.fieldPriceRepository.findFieldPriceByStartTime(endTime);
             fieldPrices.add(fieldPrice);
         }
         log.info("{}", fieldPrices);
-        booking.setTotalPrice(fieldPrices.stream().map(FieldPrice::getPrice).reduce(0.00, Double::sum) / 2);
+        booking.setTotalPrice(fieldPrices.stream().map(CourtPrice::getPrice).reduce(0.00, Double::sum) / 2);
         return this.bookingRepository.save(booking);
     }
 }

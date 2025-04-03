@@ -4,27 +4,43 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(of = "id")
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@ToString(exclude = {"userRoles","bookings","sportComplexes"})
+@Builder
+@ToString(exclude = {"userRoles","bookings","complexes"})
 @Entity
 @Table(name = "users")
-public class User extends SuperEntity implements Serializable {
+public class User implements Serializable {
+    @Id
+    private String id;
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false)
+    private Date createdAt;
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    private Date updatedAt;
     @Column(name = "first_name")
     private String firstName;
     @Column(name = "last_name")
     private String lastName;
+//    @Column(name = "last_name")
+//    private String fullName;
     private String username;
     private String email;
     private String phone;
     private String password;
+    @Column(name = "email_verified", nullable = true)
+    private boolean emailVerified;
 
 
 
@@ -34,9 +50,9 @@ public class User extends SuperEntity implements Serializable {
     private List<UserRole> userRoles;
 
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
-    @JsonBackReference("sportComplex_owner")
+    @JsonBackReference("complex_owner")
     @JsonIgnore
-    private Set<SportComplex> sportComplexes;
+    private Set<Complex> complexes;
 
     @OneToMany(mappedBy = "customer")
     @JsonBackReference("booking_customer")

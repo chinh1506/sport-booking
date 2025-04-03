@@ -1,13 +1,11 @@
 package com.example.booking.service;
 
-import com.example.booking.dto.auth.ExchangeTokenResponse;
-import com.example.booking.dto.auth.RegisterUserRequest;
-import com.example.booking.dto.auth.TokenParamRequest;
-import com.example.booking.entity.User;
+import com.example.booking.dto.client.ExchangeTokenClient;
+import com.example.booking.dto.request.RegisterUserRequest;
 
 public interface AuthService {
 
     Object register(RegisterUserRequest registerUserRequest) throws IllegalAccessException;
-    Object refreshToken(String refreshToken) ;
-//    ExchangeTokenResponse exchangeToken(TokenParamRequest tokenParamRequest);
+    ExchangeTokenClient refreshToken(String refreshToken,String clientId) ;
+//    ExchangeTokenClient exchangeToken(TokenParamRequest tokenParamRequest);
 }

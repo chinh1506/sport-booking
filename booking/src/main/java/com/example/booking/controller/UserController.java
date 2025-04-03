@@ -1,6 +1,6 @@
 package com.example.booking.controller;
 
-import com.example.booking.dto.response.user.UserResponse;
+import com.example.booking.dto.response.UserResponse;
 import com.example.booking.entity.User;
 import com.example.booking.service.UserService;
 import org.modelmapper.ModelMapper;
@@ -22,10 +22,7 @@ public class UserController {
 
     @GetMapping("my-information")
     public UserResponse getUserService() {
-        User user=this.userService.getUserById("");
-
-
-
-        return modelMapper.map(user, UserResponse.class);
+        User user=this.userService.getUserInfor();
+        return this.modelMapper.map(user, UserResponse.class);
     }
 }

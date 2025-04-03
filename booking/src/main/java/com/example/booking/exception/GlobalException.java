@@ -56,6 +56,7 @@ public class GlobalException {
     @ExceptionHandler(FeignException.class)
     public ResponseEntity<RestResponse<Object>> handleFeignException(FeignException ex) {
         System.out.println("Ex handleFeignException");
+        ex.printStackTrace();
         RestResponse<Object> response = RestResponse.builder().status("Error").build();
 
         response.setError(ex.getMessage());

@@ -1,14 +1,26 @@
 package com.example.booking.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
-@EqualsAndHashCode(callSuper = true)
+import java.util.Date;
+
 @Entity
 @Table(name = "addresses")
 @Data
-public class Address extends SuperEntity{
+public class Address {
+    @Id
+    private String id;
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false)
+    private Date createdAt;
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    private Date updatedAt;
     private String street;
     private String ward;
     private String district;
@@ -17,5 +29,6 @@ public class Address extends SuperEntity{
     private String zip;
 
     @OneToOne(fetch = FetchType.EAGER, mappedBy = "address")
-    private SportComplex sportComplex;
+    @JsonBackReference(value = "complex_address")
+    private Complex complex;
 }

@@ -6,7 +6,7 @@ import lombok.Getter;
 môn thể thao gì, cầu lông hay bóng chuyền, bóng rổ, đá bóng
  */
 @Getter
-public enum FieldType {
+public enum CourtType {
     BADMINTON("BADMINTON"),
     FOOTBALL("FOOTBALL"),
     BASKETBALL("BASKETBALL"),
@@ -17,7 +17,7 @@ public enum FieldType {
     ;
 
     private final String type;
-    private FieldType(String type) {
+    private CourtType(String type) {
         this.type = type;
     }
 }

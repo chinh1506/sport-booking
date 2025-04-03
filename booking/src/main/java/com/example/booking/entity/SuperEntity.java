@@ -29,8 +29,6 @@ import java.util.Date;
 @SuperBuilder
 public abstract class SuperEntity  {
     @Id
-//    @GeneratedValue(generator = "GenerateID")
-//    @GenericGenerator(name = "GenerateID", type = GenerateID.class)
     private String id;
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)

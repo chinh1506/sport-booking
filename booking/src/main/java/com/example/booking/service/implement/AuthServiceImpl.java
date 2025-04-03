@@ -1,8 +1,9 @@
 package com.example.booking.service.implement;
 
-import com.example.booking.client.KeycloakClient;
-import com.example.booking.dto.auth.RegisterUserParam;
-import com.example.booking.dto.auth.RegisterUserRequest;
+import com.example.booking.client.KeycloakAdminClient;
+import com.example.booking.dto.client.ExchangeTokenClient;
+import com.example.booking.dto.client.RegisterUserParam;
+import com.example.booking.dto.request.RegisterUserRequest;
 import com.example.booking.entity.User;
 import com.example.booking.repository.UserRepository;
 import com.example.booking.service.AuthService;
@@ -20,7 +21,7 @@ import java.util.Objects;
 @Service
 @Slf4j
 public class AuthServiceImpl implements AuthService {
-    private final KeycloakClient keycloakClient;
+    private final KeycloakAdminClient keycloakClient;
     private final UserRepository userRepository;
     private final ObjectMapper objectMapper;
 
@@ -28,7 +29,7 @@ public class AuthServiceImpl implements AuthService {
     private String accountServiceClientId;
 
 
-    public AuthServiceImpl(KeycloakClient keycloakClient, UserRepository userRepository, ObjectMapper objectMapper) {
+    public AuthServiceImpl(KeycloakAdminClient keycloakClient, UserRepository userRepository, ObjectMapper objectMapper) {
         this.keycloakClient = keycloakClient;
         this.objectMapper = objectMapper;
         this.userRepository = userRepository;
@@ -40,7 +41,7 @@ public class AuthServiceImpl implements AuthService {
         String userId = null;
         try {
             User user = objectMapper.convertValue(registerUserRequest, User.class);
-            log.info("{}", user);
+//            log.info("{}", user);
             RegisterUserParam registerUserParam = RegisterUserParam.builder()
                     .email(registerUserRequest.getEmail())
                     .username(registerUserRequest.getEmail())
@@ -48,7 +49,7 @@ public class AuthServiceImpl implements AuthService {
                     .lastName(registerUserRequest.getLastName())
                     .enabled(true)
                     .build();
-            log.debug("{}", registerUserParam);
+//            log.debug("{}", registerUserParam);
 
             ResponseEntity<Object> registerUserRes = this.keycloakClient.registerUser(registerUserParam);
             userId = extractUserId(registerUserRes);
@@ -65,12 +66,12 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public Object refreshToken(String refreshToken) {
+    public ExchangeTokenClient refreshToken(String refreshToken,String clientId) {
         Map<String, String> params = new HashMap<>();
 
         params.put("refresh_token", refreshToken);
         params.put("grant_type", "refresh_token");
-        params.put("client_id", this.accountServiceClientId);
+        params.put("client_id", clientId);
 
         return this.keycloakClient.exchangeToken(params);
     }

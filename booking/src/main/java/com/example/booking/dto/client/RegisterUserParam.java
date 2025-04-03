@@ -1,7 +1,5 @@
-package com.example.booking.dto.auth;
+package com.example.booking.dto.client;
 
-import jakarta.validation.constraints.AssertTrue;
-import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

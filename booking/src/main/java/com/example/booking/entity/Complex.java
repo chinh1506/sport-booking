@@ -13,15 +13,14 @@ import java.util.List;
  */
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(name = "sport_complexes")
+@Table(name = "complexes")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(exclude = {"sportFields"})
-public class SportComplex extends SuperEntity{
+@ToString(exclude = {"courts"})
+public class Complex extends SuperEntity {
     private String name;
     private String description;
-//    private String address;
     @Column(name = "open_time")
     private LocalTime openTime;
     @Column(name = "close_time")
@@ -29,14 +28,15 @@ public class SportComplex extends SuperEntity{
 
     @ManyToOne
     @JoinColumn(name = "owner_id")
-    @JsonManagedReference("sportComplex_owner")
+    @JsonManagedReference("complex_owner")
     private User owner;
 
-    @OneToMany(mappedBy = "sportComplex")
+    @OneToMany(mappedBy = "complex")
     @JsonBackReference()
-    private List<SportField> sportFields;
+    private List<Court> courts;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id", referencedColumnName = "id")
+    @JsonManagedReference(value = "complex_address")
     private Address address;
 }

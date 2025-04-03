@@ -29,6 +29,7 @@ public class SecurityConfig {
                 "/bookings/**",
                 "/auth/register",
                 "/auth/exchange-token",
+                "/auth/refresh-token",
                 "/ws/**"
         };
 
@@ -58,7 +59,6 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
-//        config.addAllowedOrigin("*");
         config.setAllowCredentials(true);
 
         config.addAllowedOriginPattern("*");
