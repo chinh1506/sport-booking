@@ -4,9 +4,7 @@ import mem from "mem";
 import { deleteCookie, getCookie, setCookie } from "cookies-next";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
-const URLS_TO_IGNORE: any[] = ["/auth/login", "/auth/register"];
-console.log("BASE URL",BASE_URL);
-
+const URLS_TO_IGNORE: string[] = ["/auth/login", "/auth/register"];
 
 const axiosClient = axios.create({
     baseURL: BASE_URL,
@@ -23,17 +21,13 @@ axiosClient.interceptors.request.use(
         const tokensCookie = await getCookie("tokens");
 
         const tokens = tokensCookie ? JSON.parse(tokensCookie) : undefined;
-        if (URLS_TO_IGNORE.includes(config.url)) {
+        if (config.url && URLS_TO_IGNORE.includes(config.url)) {
             return config;
         }
-        if (tokens?.accessToken) {
-            //   @ts-ignore
-            config.headers = {
-                ...config.headers,
-                authorization: `Bearer ${tokens?.accessToken}`,
-            };
-        }
 
+        if (tokens?.accessToken) {
+            config.headers.Authorization = `Bearer ${tokens?.accessToken}`;
+        }
         return config;
     },
     (error) => {
@@ -55,10 +49,7 @@ axiosClient.interceptors.response.use(
             const result = await memoizedRefreshToken();
 
             if (result?.accessToken) {
-                config.headers = {
-                    ...config.headers,
-                    authorization: `Bearer ${result?.accessToken}`,
-                };
+                config.headers.Authorization = `Bearer ${result?.accessToken}`;
             }
 
             return axiosClient(config);

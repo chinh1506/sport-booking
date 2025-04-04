@@ -3,6 +3,7 @@ import Keycloak from "next-auth/providers/keycloak";
 import { cookies } from "next/headers";
 import { URLSearchParams } from "node:url";
 import { JwtToken } from "@/interfaces/JwtToken";
+import { deleteCookie, getCookie, setCookie } from "cookies-next";
 const handler = NextAuth({
     providers: [
         Keycloak({
@@ -13,7 +14,7 @@ const handler = NextAuth({
     ],
     callbacks: {
         async jwt({ token, account, profile, user }) {
-            const cookie = await cookies();
+            // const cookie = await cookies();
             let newJwt: JwtToken = token;
             if (account && user) {
                 newJwt = {
@@ -26,17 +27,18 @@ const handler = NextAuth({
                     email: token.email,
                     tokenType: account.token_type,
                 };
+               
                 return newJwt;
             }
 
-            
             if (newJwt.expiresAt && Date.now() >= newJwt.expiresAt) {
                 return newJwt;
             }
             return await refreshAccessToken(newJwt);
         },
         session({ session, token }) {
-             session = { ...session, ...token };
+            session = { ...session, ...token };
+            setCookie("tokens", JSON.stringify(token));
 
             return session;
         },
@@ -49,18 +51,11 @@ async function refreshAccessToken(token: JwtToken): Promise<JwtToken> {
                 "Content-Type": "application/json",
             },
             method: "POST",
-            // body: new URLSearchParams({
-            //     clientId: "web-app",
-            //     refreshToken: token.refreshToken || "",
-            // }),
             body: JSON.stringify({
                 clientId: "web-app",
                 refreshToken: token.refreshToken || "",
             }),
         });
-        console.log("response");
-        console.log(response);
-
         const refreshedTokens = await response.json();
 
         if (!response.ok) {

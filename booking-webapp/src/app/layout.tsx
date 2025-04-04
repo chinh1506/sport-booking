@@ -17,7 +17,7 @@ export const metadata: Metadata = {
         "Download Tailwind Blog Post Page, a free webpage template developed by Creative Tim. Based on Tailwind CSS and Material Tailwind, see the live demo on our site and elevate your blogging experience!",
 };
 
-export default function RootLayout({ children,session }: { children: React.ReactNode,session:Session }) {
+export default function RootLayout({ children, session }: { children: React.ReactNode, session: Session }) {
     return (
         <html lang="en">
             <head>
@@ -48,9 +48,9 @@ export default function RootLayout({ children,session }: { children: React.React
             </head>
             <body className={roboto.className}>
                 <MySessionProvider session={session}>
-                <StoreProvider >{children}</StoreProvider>
+                    <StoreProvider >{children}</StoreProvider>
                 </MySessionProvider>
-                
+
             </body>
         </html>
     );
