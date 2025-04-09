@@ -27,18 +27,19 @@ const handler = NextAuth({
                     email: token.email,
                     tokenType: account.token_type,
                 };
-               
+
                 return newJwt;
             }
+            console.log(Date.now());
+            newJwt.expiresAt && console.log(newJwt.expiresAt * 1000);
 
-            if (newJwt.expiresAt && Date.now() >= newJwt.expiresAt) {
+            if (newJwt.expiresAt && Date.now() < newJwt.expiresAt * 1000) {
                 return newJwt;
             }
             return await refreshAccessToken(newJwt);
         },
         session({ session, token }) {
             session = { ...session, ...token };
-            setCookie("tokens", JSON.stringify(token));
 
             return session;
         },

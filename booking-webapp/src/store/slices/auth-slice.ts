@@ -50,6 +50,8 @@ export const authSlice = createSlice({
                 state.loading = true;
             })
             .addCase(loadUserAction.rejected, (state, action) => {
+                console.log("Reject signout");
+                
                 state.isLogin = false;
                 state.loading=false;
                 state.error=action.error.message;
@@ -62,7 +64,12 @@ export const loadUserAction = createAsyncThunk("auth/loadUser", async (token: Jw
         // setCookie(token)
         const user = await userService.getUserInfor();
         return user;
-    } catch (error) {}
+    } catch (error) {
+        console.log("Load user err");
+        console.log(error);
+        return Promise.reject(error);
+        
+    }
 });
 
 // Action creators are generated for each case reducer function

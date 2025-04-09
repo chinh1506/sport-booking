@@ -12,7 +12,7 @@ class UserService {
      *             - else return null
      */
     public async getUserInfor(): Promise<User | null> {
-        return axiosClient.get(this.URL + "my-information");
+        return axiosClient.get(this.URL + "/my-information");
     }
 }
 

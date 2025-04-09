@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosResponse, InternalAxiosRequestConfig } from "axios";
 import queryString from "query-string";
 import mem from "mem";
 import { deleteCookie, getCookie, setCookie } from "cookies-next";
@@ -17,10 +17,11 @@ const axiosClient = axios.create({
 });
 
 axiosClient.interceptors.request.use(
-    async (config) => {
+    async (config: InternalAxiosRequestConfig): Promise<InternalAxiosRequestConfig> => {
         const tokensCookie = await getCookie("tokens");
 
         const tokens = tokensCookie ? JSON.parse(tokensCookie) : undefined;
+        console.log(tokens);
         if (config.url && URLS_TO_IGNORE.includes(config.url)) {
             return config;
         }
@@ -36,15 +37,15 @@ axiosClient.interceptors.request.use(
     }
 );
 axiosClient.interceptors.response.use(
-    (res) => {
+    (res: AxiosResponse) => {
         if (res && res.data) {
             return res.data;
         }
         return res;
     },
     async (error) => {
-        const config = error?.config;
-        if (error?.response?.status === 401 && !config?.sent) {
+        const config = error.config;
+        if ((error.response?.status === 401 || error.response.data?.statusCode === 401) && !config?.sent) {
             config.sent = true;
             const result = await memoizedRefreshToken();
 
@@ -62,24 +63,33 @@ const refreshTokenFn = async () => {
     const tokenString = await getCookie("tokens");
     const tokens = tokenString ? JSON.parse(tokenString) : undefined;
     if (!tokens) {
-        const error = new Error("Not have refresh token");
+        const error = new Error("Refresh_token is missing");
         return Promise.reject(error);
     }
 
     try {
-        const { data } = await axios.get(BASE_URL + "/auth/refresh", {
-            headers: { Authorization: "Bearer " + tokens.refreshToken },
-        });
-        tokens.accessToken = data?.accessToken;
-        tokens.refreshToken = data?.refreshToken;
+        const { data } = await axios.post(
+            BASE_URL + "/auth/refresh-token",
+            {
+                clientId: "web-app",
+                refreshToken: tokens.refreshToken,
+            },
+            // {
+            //     headers: { Authorization: "Bearer " + tokens.refreshToken },
+            // }
+        );
+        
 
-        if (!tokens?.accessToken) {
+        if (!(data.data && data.data.accessToken && data.data.refreshToken)) {
             deleteCookie("tokens");
-            const error = new Error("Can't fetch new token");
-            return Promise.reject(error);
+            return Promise.reject(new Error("There are no JWT."));
         }
+
+        tokens.accessToken = data?.data.accessToken;
+        tokens.refreshToken = data?.data.refreshToken;
+
         setCookie("tokens", JSON.stringify(tokens));
-        return data;
+        return data.data;
     } catch (error) {
         deleteCookie("tokens");
         return Promise.reject(error);

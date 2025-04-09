@@ -8,7 +8,8 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import { useEffect, useState } from "react";
 import { v4 } from "uuid";
 import { stompClient } from "../Utils";
-import { bookingService } from "@/api";
+import { bookingService, courtService } from "@/api";
+import { Court } from "@/interfaces/Court";
 
 type CustomEventInput = EventInput & {
     userId?: string;
@@ -19,6 +20,13 @@ function BookingPage() {
     const [open, setOpen] = useState(false);
     const [objectSelected, setObjectSelected] = useState<UserSelected>({});
     const [events, setEvents] = useState<CustomEventInput[]>([]);
+    const [courts, setCourts] = useState<Court[]>([]);
+
+    const fetchCourt = async () => {
+        const courtsRes = await courtService.getCourtsByComplexId("1");
+
+        courtsRes && setCourts(courtsRes?.data);
+    };
 
     const fetchBooking = async () => {
         try {
@@ -34,6 +42,7 @@ function BookingPage() {
             stompClient.activate();
         }
         fetchBooking();
+        fetchCourt()
 
         return () => {
             stompClient.deactivate();
@@ -74,9 +83,10 @@ function BookingPage() {
                                     value={1}
                                     defaultValue={1}
                                 >
-                                    <option value={1}>New Mexico</option>
+                                    {courts.map(court=><option value={1}>{court.name}</option>)}
+                                    {/* <option value={1}>New Mexico</option>
                                     <option>Missouri</option>
-                                    <option>Texas</option>
+                                    <option>Texas</option> */}
                                 </select>
                                 <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                                     <svg

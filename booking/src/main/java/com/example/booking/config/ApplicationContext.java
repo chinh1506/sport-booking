@@ -1,5 +1,9 @@
 package com.example.booking.config;
 
+import com.example.booking.dto.response.ComplexResponse;
+import com.example.booking.dto.response.CourtResponse;
+import com.example.booking.entity.Complex;
+import com.example.booking.entity.Court;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -40,10 +44,10 @@ public class ApplicationContext {
 
     @Bean
     public ObjectMapper objectMapper() {
-            ObjectMapper objectMapper = new ObjectMapper();
+        ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-            return objectMapper;
+        return objectMapper;
     }
 
     @Bean
@@ -51,6 +55,16 @@ public class ApplicationContext {
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.getConfiguration()
                 .setMatchingStrategy(MatchingStrategies.STRICT);
+
+        modelMapper.typeMap(Complex.class, ComplexResponse.class).addMappings(mapper -> {
+            mapper.map(Complex::getAddress, ComplexResponse::setAddress);
+            mapper.map(Complex::getOwner, ComplexResponse::setOwner);
+        });
+
+        modelMapper.typeMap(Court.class, CourtResponse.class);
+//                .addMappings(mapper -> {
+//            mapper.map(Court::getComplex, CourtResponse::setComplex);
+//        });
         return modelMapper;
     }
 

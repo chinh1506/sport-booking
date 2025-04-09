@@ -4,21 +4,32 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalTime;
+import java.util.Date;
 import java.util.List;
 
 /*
 
  */
-@EqualsAndHashCode(callSuper = true)
+//@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "complexes")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString(exclude = {"courts"})
-public class Complex extends SuperEntity {
+public class Complex {
+    @Id
+    private String id;
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false)
+    private Date createdAt;
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    private Date updatedAt;
     private String name;
     private String description;
     @Column(name = "open_time")

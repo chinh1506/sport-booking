@@ -1,6 +1,9 @@
 package com.example.booking.controller;
 
+import com.example.booking.dto.response.ComplexResponse;
 import com.example.booking.dto.response.CourtResponse;
+import com.example.booking.entity.Complex;
+import com.example.booking.entity.Court;
 import com.example.booking.service.CourtService;
 import com.example.booking.util.RestResponse;
 import org.modelmapper.ModelMapper;
@@ -25,7 +28,16 @@ public class CourtController {
 
     @GetMapping("complexes")
     public RestResponse<List<CourtResponse>> getCourtByComplexId(@RequestParam String complexId) {
-        return null;
+        List<Court> courts=this.courtService.getByComplexId(complexId);
+        System.out.println(courts);
+
+        List<CourtResponse> courtsRes = courts.stream().map(court -> {
+            CourtResponse courtResponse = modelMapper.map(court, CourtResponse.class);
+//            courtResponse.setComplex(modelMapper.map(court.getComplex(), ComplexResponse.class));
+//            courtResponse.setComplex(ComplexResponse.getTypeMap(modelMapper).map());
+            return courtResponse;
+        }).toList();
+        return RestResponse.success(courtsRes);
     }
 
 }
