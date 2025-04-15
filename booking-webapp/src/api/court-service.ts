@@ -12,7 +12,7 @@ class CourtService {
      * return court - if token is valid
      *             - else return null
      */
-    public async getCourtsByComplexId(complexId: string): Promise<RestResponse<Court> | null> {
+    public async getCourtsByComplexId(complexId: string): Promise<Court[] | null> {
         return axiosClient.get(this.URL + "/complexes", { params: { complexId } });
     }
 }

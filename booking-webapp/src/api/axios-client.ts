@@ -39,7 +39,7 @@ axiosClient.interceptors.request.use(
 axiosClient.interceptors.response.use(
     (res: AxiosResponse) => {
         if (res && res.data) {
-            return res.data;
+            return res.data.data;
         }
         return res;
     },
@@ -73,12 +73,11 @@ const refreshTokenFn = async () => {
             {
                 clientId: "web-app",
                 refreshToken: tokens.refreshToken,
-            },
+            }
             // {
             //     headers: { Authorization: "Bearer " + tokens.refreshToken },
             // }
         );
-        
 
         if (!(data.data && data.data.accessToken && data.data.refreshToken)) {
             deleteCookie("tokens");
