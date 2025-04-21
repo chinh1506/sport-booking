@@ -17,6 +17,6 @@ public class BookingResponse {
     private Double totalPrice;
     private BookingStatus status;
 
-    private CourtResponse sportField;
+    private CourtResponse court;
 
 }

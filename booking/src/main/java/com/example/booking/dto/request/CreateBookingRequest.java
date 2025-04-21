@@ -10,8 +10,8 @@ import java.time.LocalTime;
 
 @Data
 public class CreateBookingRequest {
-    @NotBlank(message = "FieldId could not be blank")
-    private String fieldId;
+    @NotBlank(message = "CourtId could not be blank")
+    private String courtId;
     @NotNull(message = "startDate could not be blank")
     @FutureOrPresent(message = "startDate is not valid")
 //    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")

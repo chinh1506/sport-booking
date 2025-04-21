@@ -11,6 +11,6 @@ public interface CourtPriceRepository extends JpaRepository<CourtPrice, String> 
     @Query(value = "select fp " +
             "from CourtPrice fp " +
             "where :startTime >= fp.startTime and :startTime < fp.endTime")
-    CourtPrice findFieldPriceByStartTime(LocalTime startTime);
+    CourtPrice findCourtPriceByStartTime(LocalTime startTime);
 
 }

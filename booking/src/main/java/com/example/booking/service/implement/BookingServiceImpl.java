@@ -23,11 +23,11 @@ import java.util.List;
 @Slf4j
 public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
-    private final CourtPriceRepository fieldPriceRepository;
+    private final CourtPriceRepository courtPriceRepository;
 
-    public BookingServiceImpl(BookingRepository bookingRepository, CourtPriceRepository fieldPriceRepository) {
+    public BookingServiceImpl(BookingRepository bookingRepository, CourtPriceRepository courtPriceRepository) {
         this.bookingRepository = bookingRepository;
-        this.fieldPriceRepository = fieldPriceRepository;
+        this.courtPriceRepository = courtPriceRepository;
     }
 
     @Override
@@ -45,7 +45,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public Booking bookingField(String fieldId, LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime, String userId) throws Exception {
+    public Booking bookingCourt(String courtId, LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime, String userId) throws Exception {
         Booking booking = Booking.builder()
                 .id(Utilities.generateID("BG"))
                 .startDate(startDate)
@@ -53,22 +53,22 @@ public class BookingServiceImpl implements BookingService {
                 .startTime(startTime)
                 .endTime(endTime)
                 .status(BookingStatus.PENDING)
-                .court(Court.builder().id(fieldId).build())
+                .court(Court.builder().id(courtId).build())
                 .build();
 
-        List<Booking> bookingFound = this.bookingRepository.findFieldByTimeAndFieldId(fieldId, startDate, startTime, endTime);
+        List<Booking> bookingFound = this.bookingRepository.findCourtByTimeAndCourtId(courtId, startDate, startTime, endTime);
         if (bookingFound != null && !bookingFound.isEmpty()) {
-            throw new Exception("This field not available in this time.");
+            throw new Exception("This court not available in this time.");
         }
-        List<CourtPrice> fieldPrices = new ArrayList<>();
+        List<CourtPrice> courtPrices = new ArrayList<>();
 
         while (!endTime.equals(startTime)) {
             endTime = endTime.minusMinutes(30);
-            CourtPrice fieldPrice = this.fieldPriceRepository.findFieldPriceByStartTime(endTime);
-            fieldPrices.add(fieldPrice);
+            CourtPrice courtPrice = this.courtPriceRepository.findCourtPriceByStartTime(endTime);
+            courtPrices.add(courtPrice);
         }
-        log.info("{}", fieldPrices);
-        booking.setTotalPrice(fieldPrices.stream().map(CourtPrice::getPrice).reduce(0.00, Double::sum) / 2);
+        log.info("{}", courtPrices);
+        booking.setTotalPrice(courtPrices.stream().map(CourtPrice::getPrice).reduce(0.00, Double::sum) / 2);
         return this.bookingRepository.save(booking);
     }
 }

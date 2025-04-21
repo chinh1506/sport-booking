@@ -45,21 +45,19 @@ public class BookingController {
                 .orderBy(orderBy)
                 .order(order)
                 .build();
-        log.info("bookings count: {}", params);
-
+//        log.info("bookings count: {}", params);
         Page<Booking> bookings = this.bookingService.getAll(params);
 
         log.info("bookings count: {}", bookings.getTotalElements());
         List<BookingResponse> bookingsRes = bookings.stream()
                 .map(o -> modelMapper.map(o, BookingResponse.class))
                 .toList();
-
         return RestResponse.success(bookingsRes);
     }
 
     @PostMapping()
-    public RestResponse<BookingResponse> bookField(@Valid @RequestBody CreateBookingRequest createBookingRequest) throws Exception {
-        Booking booking = this.bookingService.bookingField(createBookingRequest.getFieldId()
+    public RestResponse<BookingResponse> bookCourt(@Valid @RequestBody CreateBookingRequest createBookingRequest) throws Exception {
+        Booking booking = this.bookingService.bookingCourt(createBookingRequest.getCourtId()
                 , createBookingRequest.getStartDate()
                 , null
                 , createBookingRequest.getStartTime()
@@ -69,10 +67,10 @@ public class BookingController {
         return RestResponse.success(modelMapper.map(booking, BookingResponse.class));
     }
 
-    @MessageMapping("/fields")
-    @SendTo("/topic/fields")
-    public RestResponse<BookingResponse> bookingFieldRealtime(@Valid @RequestBody CreateBookingRequest createBookingRequest) throws Exception {
-        Booking booking = this.bookingService.bookingField(createBookingRequest.getFieldId()
+    @MessageMapping("/courts")
+    @SendTo("/topic/courts")
+    public RestResponse<BookingResponse> bookingCourtRealtime(@Valid @RequestBody CreateBookingRequest createBookingRequest) throws Exception {
+        Booking booking = this.bookingService.bookingCourt(createBookingRequest.getCourtId()
                 , createBookingRequest.getStartDate()
                 , null
                 , createBookingRequest.getStartTime()

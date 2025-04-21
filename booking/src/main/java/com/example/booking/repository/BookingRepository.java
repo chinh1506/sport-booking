@@ -18,16 +18,16 @@ public interface BookingRepository extends JpaRepository<Booking, String>{
             "where b.startDate = :startDate and ((b.startTime >= :startTime and b.startTime < :endTime) " +
             "or " +
             "(b.endTime >= :startTime and b.endTime < :endTime))")
-    Booking findFieldByTime(LocalDate startDate, LocalTime startTime, @Param("endTime") LocalTime endTime);
+    Booking findCourtByTime(LocalDate startDate, LocalTime startTime, @Param("endTime") LocalTime endTime);
 
     @Query(value = "select b " +
             "from Booking as b " +
-            "where b.court.id = :fieldId and b.startDate = :startDate and ((b.startTime >= :startTime and b.startTime < :endTime) " +
+            "where b.court.id = :courtId and b.startDate = :startDate and ((b.startTime >= :startTime and b.startTime < :endTime) " +
             "or " +
             "(b.endTime > :startTime and b.endTime <= :endTime))")
-    List<Booking> findFieldByTimeAndFieldId(String fieldId, LocalDate startDate, LocalTime startTime, @Param("endTime") LocalTime endTime);
+    List<Booking> findCourtByTimeAndCourtId(String courtId, LocalDate startDate, LocalTime startTime, @Param("endTime") LocalTime endTime);
 
-    List<Booking> findAllByStartDateAndCourt_Id(LocalDate startDate, String sportField_id);
+    List<Booking> findAllByStartDateAndCourt_Id(LocalDate startDate, String sportCourt_id);
 
     @Query(value = "select b " +
             "       from Booking b " +
