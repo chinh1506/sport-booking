@@ -1,16 +1,15 @@
 "use client";
+import { bookingService, courtService } from "@/api";
 import BookingModal from "@/components/BookingModal";
 import { UserSelected } from "@/interfaces/Booking";
+import { Court } from "@/interfaces/Court";
 import { EventContentArg, EventInput } from "@fullcalendar/core/index.js";
 import interactionPlugin from "@fullcalendar/interaction";
 import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
+import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { v4 } from "uuid";
-import { stompClient } from "../../Utils";
-import { bookingService, courtService } from "@/api";
-import { Court } from "@/interfaces/Court";
-import { useParams } from "next/navigation";
 
 type CustomEventInput = EventInput & {
     userId?: string;
@@ -23,7 +22,7 @@ function BookingPage() {
     const [events, setEvents] = useState<CustomEventInput[]>([]);
     const [courts, setCourts] = useState<Court[]>([]);
 
-    const param = useParams()
+    const param = useParams();
 
     const complexId: string = param.complexId as string;
 
@@ -32,7 +31,6 @@ function BookingPage() {
             const courtsRes = await courtService.getCourtsByComplexId(complexId);
             courtsRes && setCourts(courtsRes);
         }
-
     };
 
     const fetchBooking = async () => {
@@ -45,15 +43,8 @@ function BookingPage() {
     };
 
     useEffect(() => {
-        if (!stompClient.active) {
-            stompClient.activate();
-        }
         fetchBooking();
-        fetchCourt()
-
-        return () => {
-            stompClient.deactivate();
-        };
+        fetchCourt();
     }, []);
 
     const handleModalCancel = () => {
@@ -90,8 +81,11 @@ function BookingPage() {
                                     value={1}
                                     defaultValue={1}
                                 >
-                                    {courts.map(court => <option key={court.id} value={court.id}>{court.name}</option>)}
-                            
+                                    {courts.map((court) => (
+                                        <option key={court.id} value={court.id}>
+                                            {court.name}
+                                        </option>
+                                    ))}
                                 </select>
                                 <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                                     <svg
