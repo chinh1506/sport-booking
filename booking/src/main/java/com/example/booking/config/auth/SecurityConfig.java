@@ -27,6 +27,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationEntryPoint authenticationEntryPoint) throws Exception {
         final String[] PUBLIC_ENPOINT = {
                 "/bookings/**",
+                "/courts/**",
                 "/auth/register",
                 "/auth/exchange-token",
                 "/auth/refresh-token",
