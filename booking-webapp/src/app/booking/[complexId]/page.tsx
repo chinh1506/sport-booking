@@ -32,7 +32,6 @@ function BookingPage() {
             const courtsRes = await courtService.getCourtsByComplexId(complexId);
             courtsRes && setCourts(courtsRes);
         }
-
     };
 
     const fetchBooking = async () => {
