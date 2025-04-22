@@ -23,7 +23,7 @@ import java.util.List;
 @RequestMapping("/bookings")
 public class BookingController {
     private final BookingService bookingService;
-    private ModelMapper modelMapper;
+    private final ModelMapper modelMapper;
 
 
     public BookingController(BookingService bookingService, ModelMapper modelMapper) {
@@ -32,7 +32,8 @@ public class BookingController {
     }
 
     @GetMapping()
-    public RestResponse<List<?>> getAll(@RequestParam(required = false) LocalDate startDate,
+    public RestResponse<Page<?>> getAll(@RequestParam(required = false) LocalDate startDate,
+                                        @RequestParam(required = false) String courtId,
                                         @RequestParam(defaultValue = "0") int page,
                                         @RequestParam(defaultValue = "10") int limit,
                                         @RequestParam(defaultValue = "createdAt") String orderBy,
@@ -44,14 +45,21 @@ public class BookingController {
                 .limit(limit)
                 .orderBy(orderBy)
                 .order(order)
+                .courtId(courtId)
                 .build();
 //        log.info("bookings count: {}", params);
         Page<Booking> bookings = this.bookingService.getAll(params);
+        Page<BookingResponse> bookingsRes = bookings.map(o -> modelMapper.map(o, BookingResponse.class));
 
         log.info("bookings count: {}", bookings.getTotalElements());
-        List<BookingResponse> bookingsRes = bookings.stream()
-                .map(o -> modelMapper.map(o, BookingResponse.class))
-                .toList();
+//        List<BookingResponse> bookingsRes = bookings.stream()
+//                .map(o -> modelMapper.map(o, BookingResponse.class))
+//                .toList();
+
+
+        Page<BookingResponse> responsePage= Page.empty(bookings.getPageable());
+
+
         return RestResponse.success(bookingsRes);
     }
 

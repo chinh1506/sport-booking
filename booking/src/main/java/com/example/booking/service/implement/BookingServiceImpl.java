@@ -41,7 +41,7 @@ public class BookingServiceImpl implements BookingService {
         LocalDate startDate = param.getStartDate();
 
 
-        return this.bookingRepository.findAllBookingPage(startDate, pageable);
+        return this.bookingRepository.findAllBookingPage(startDate, param.getCourtId(), pageable);
     }
 
     @Override

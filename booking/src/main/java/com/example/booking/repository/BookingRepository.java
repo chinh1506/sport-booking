@@ -31,8 +31,9 @@ public interface BookingRepository extends JpaRepository<Booking, String>{
 
     @Query(value = "select b " +
             "       from Booking b " +
-            "       where (cast(:startDate as date ) is null or b.startDate = :startDate)")
-    Page<Booking> findAllBookingPage(LocalDate startDate,Pageable pageable);
+            "       where (cast(:startDate as date ) is null or b.startDate = :startDate)" +
+            "               and (:courtId is null or b.court.id = :courtId)")
+    Page<Booking> findAllBookingPage(LocalDate startDate,String courtId,Pageable pageable);
 
 
 

@@ -36,7 +36,20 @@ function BookingPage() {
     const fetchBooking = async () => {
         try {
             const bookingRes = await bookingService.getAll();
-            console.log(bookingRes);
+
+            if (!bookingRes) return;
+
+            const eventTemp: CustomEventInput[] = bookingRes.content.map((booking) => {
+                return {
+                    locked: true,
+                    start: new Date(`${booking.startDate}T${booking.startTime}`),
+                    date: new Date(`${booking.startDate}T${booking.startTime}`),
+                    end: new Date(`${booking.startDate}T${booking.endTime}`),
+                    title: booking.status,
+                }
+            })
+            setEvents(eventTemp);
+
         } catch (error) {
             console.error(error);
         }
@@ -169,7 +182,7 @@ function renderEventContent(eventInfo: EventContentArg) {
     return (
         <div>
             <b>{eventInfo.timeText}</b>
-            <i>{eventInfo.event.title}</i>
+            <i> - {eventInfo.event.title}</i>
         </div>
     );
 }

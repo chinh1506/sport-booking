@@ -10,4 +10,5 @@ import java.time.LocalDate;
 @SuperBuilder
 public class BookingParam extends PageAndFilterParam {
         private LocalDate startDate;
+        private String courtId;
 }
