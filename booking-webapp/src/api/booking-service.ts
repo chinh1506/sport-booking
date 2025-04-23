@@ -1,6 +1,6 @@
 import { AxiosInstance } from "axios";
 import axiosClient from "./axios-client";
-import { Booking, Page } from "@/interfaces/Booking";
+import { Booking, BookingFilter, Page } from "@/interfaces/Booking";
 
 class BookingService {
     private readonly URL = "/bookings";
@@ -9,7 +9,7 @@ class BookingService {
     //     this.axiosClient = axiosClient;
     // }
 
-    public async getAll(params?: {}): Promise<Page<Booking> | null> {
+    public async getAll(params?: BookingFilter): Promise<Page<Booking> | null> {
         return axiosClient.get(this.URL, { params: { ...params } });
     }
 }

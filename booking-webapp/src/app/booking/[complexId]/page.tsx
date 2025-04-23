@@ -1,6 +1,7 @@
 "use client";
 import { bookingService, courtService } from "@/api";
 import BookingModal from "@/components/BookingModal";
+import { usePaginatedBookings } from "@/hooks/usePaginatedBookings";
 import { UserSelected } from "@/interfaces/Booking";
 import { Court } from "@/interfaces/Court";
 import { EventContentArg, EventInput } from "@fullcalendar/core/index.js";
@@ -11,52 +12,31 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { v4 } from "uuid";
 
-type CustomEventInput = EventInput & {
-    userId?: string;
-    locked: boolean;
-};
+
 
 function BookingPage() {
     const [open, setOpen] = useState(false);
     const [objectSelected, setObjectSelected] = useState<UserSelected>({});
-    const [events, setEvents] = useState<CustomEventInput[]>([]);
     const [courts, setCourts] = useState<Court[]>([]);
-
+    // const [selectedCourtId, setSelectedCourtId]= useState()
     const param = useParams();
-
     const complexId: string = param.complexId as string;
+
+    const { events, setEvents, filter, setFilter } = usePaginatedBookings();
 
     const fetchCourt = async () => {
         if (complexId) {
             const courtsRes = await courtService.getCourtsByComplexId(complexId);
-            courtsRes && setCourts(courtsRes);
-        }
-    };
+            if (courtsRes && courtsRes.length > 0) {
+                setFilter({ ...filter, courtId: courtsRes[0].id })
+                courtsRes && setCourts(courtsRes);
+            }
 
-    const fetchBooking = async () => {
-        try {
-            const bookingRes = await bookingService.getAll();
 
-            if (!bookingRes) return;
-
-            const eventTemp: CustomEventInput[] = bookingRes.content.map((booking) => {
-                return {
-                    locked: true,
-                    start: new Date(`${booking.startDate}T${booking.startTime}`),
-                    date: new Date(`${booking.startDate}T${booking.startTime}`),
-                    end: new Date(`${booking.startDate}T${booking.endTime}`),
-                    title: booking.status,
-                }
-            })
-            setEvents(eventTemp);
-
-        } catch (error) {
-            console.error(error);
         }
     };
 
     useEffect(() => {
-        fetchBooking();
         fetchCourt();
     }, []);
 
@@ -89,10 +69,13 @@ function BookingPage() {
                             </label>
                             <div className=" ">
                                 <select
-                                    // className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                    className="block  border rounded "
                                     id="grid-state"
-                                    value={1}
-                                    defaultValue={1}
+                                    onChange={(e) => {
+                                        setFilter({ ...filter, courtId: e.target.value })
+                                    }}
+                                    value={filter?.courtId}
+                                    defaultValue={courts[0]?.id}
                                 >
                                     {courts.map((court) => (
                                         <option key={court.id} value={court.id}>
@@ -117,7 +100,7 @@ function BookingPage() {
                 <div className="">
                     <FullCalendar
                         plugins={[timeGridPlugin, interactionPlugin]}
-                        timeZone="UTC"
+                        // timeZone="UTC"
                         locale={"vi"}
                         initialView="timeGridWeek"
                         weekends={false}

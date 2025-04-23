@@ -35,7 +35,7 @@ public class BookingController {
     public RestResponse<Page<?>> getAll(@RequestParam(required = false) LocalDate startDate,
                                         @RequestParam(required = false) String courtId,
                                         @RequestParam(defaultValue = "0") int page,
-                                        @RequestParam(defaultValue = "10") int limit,
+                                        @RequestParam(defaultValue = "1000") int limit,
                                         @RequestParam(defaultValue = "createdAt") String orderBy,
                                         @RequestParam(defaultValue = "DESCENDING") SortOrder order) {
 

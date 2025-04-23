@@ -1,3 +1,5 @@
+import { Court } from "./Court";
+
 export type UserSelected = {
     field?: string;
     date?: string;
@@ -13,14 +15,7 @@ export type Booking = {
     endTime: string;
     totalPrice: number;
     status: string;
-    sportField: SportField;
-};
-
-export type SportField = {
-    id: string;
-    name: string;
-    description: string;
-    type: string;
+    court: Court;
 };
 
 export interface Page<T> {
@@ -50,4 +45,9 @@ export interface Sort {
     empty: boolean;
     sorted: boolean;
     unsorted: boolean;
+}
+
+export interface BookingFilter {
+    startDate?: string;
+    courtId?: string;
 }
