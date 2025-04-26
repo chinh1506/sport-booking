@@ -51,3 +51,11 @@ export interface BookingFilter {
     startDate?: string;
     courtId?: string;
 }
+
+export interface CreateBookingRequest {
+    courtId?: string;
+    startDate?: string;
+    startTime?: string;
+    endTime?: string;
+    email?: string;
+}

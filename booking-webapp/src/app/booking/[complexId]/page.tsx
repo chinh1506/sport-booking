@@ -2,22 +2,22 @@
 import { bookingService, courtService } from "@/api";
 import BookingModal from "@/components/BookingModal";
 import { usePaginatedBookings } from "@/hooks/usePaginatedBookings";
-import { UserSelected } from "@/interfaces/Booking";
+import { CreateBookingRequest, UserSelected } from "@/interfaces/Booking";
 import { Court } from "@/interfaces/Court";
 import { EventContentArg, EventInput } from "@fullcalendar/core/index.js";
 import interactionPlugin from "@fullcalendar/interaction";
 import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
+import moment from "moment";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { v4 } from "uuid";
-
-
 
 function BookingPage() {
     const [open, setOpen] = useState(false);
     const [objectSelected, setObjectSelected] = useState<UserSelected>({});
     const [courts, setCourts] = useState<Court[]>([]);
+    const [activeBooking, setActiveBooking] = useState<CreateBookingRequest>();
     // const [selectedCourtId, setSelectedCourtId]= useState()
     const param = useParams();
     const complexId: string = param.complexId as string;
@@ -28,11 +28,9 @@ function BookingPage() {
         if (complexId) {
             const courtsRes = await courtService.getCourtsByComplexId(complexId);
             if (courtsRes && courtsRes.length > 0) {
-                setFilter({ ...filter, courtId: courtsRes[0].id })
+                setFilter({ ...filter, courtId: courtsRes[0].id });
                 courtsRes && setCourts(courtsRes);
             }
-
-
         }
     };
 
@@ -72,7 +70,7 @@ function BookingPage() {
                                     className="block  border rounded "
                                     id="grid-state"
                                     onChange={(e) => {
-                                        setFilter({ ...filter, courtId: e.target.value })
+                                        setFilter({ ...filter, courtId: e.target.value });
                                     }}
                                     value={filter?.courtId}
                                     defaultValue={courts[0]?.id}
@@ -100,10 +98,9 @@ function BookingPage() {
                 <div className="">
                     <FullCalendar
                         plugins={[timeGridPlugin, interactionPlugin]}
-                        // timeZone="UTC"
                         locale={"vi"}
                         initialView="timeGridWeek"
-                        weekends={false}
+                        weekends={true}
                         events={events}
                         select={function (e) {
                             let tempEvents = events;
@@ -142,6 +139,20 @@ function BookingPage() {
                             });
 
                             if (!isCancel) {
+                                const startDate = moment(e.start).format('YYYY-MM-DD');
+                                const startTime = moment(e.start).format('hh:mm');
+                                const endTime = moment(e.end).format('hh:mm');
+
+                                const booking: CreateBookingRequest = {
+                                    courtId: filter?.courtId,
+                                    startDate: startDate,
+                                    startTime: startTime,
+                                    endTime: endTime,
+                                };
+                                setActiveBooking(booking);
+                                console.log(booking);
+                                
+                                tempEvents = tempEvents.filter((event) => event.locked);
                                 setEvents([
                                     ...tempEvents,
                                     { id: v4() + "", start: a, end: b, backgroundColor: "orange", locked: false },
