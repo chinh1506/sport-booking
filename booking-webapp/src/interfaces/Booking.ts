@@ -48,6 +48,7 @@ export interface Sort {
 }
 
 export interface BookingFilter {
+    complexId?:string;
     startDate?: string;
     courtId?: string;
 }

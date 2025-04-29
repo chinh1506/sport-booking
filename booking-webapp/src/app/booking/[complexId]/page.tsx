@@ -1,17 +1,12 @@
 "use client";
-import { bookingService, courtService } from "@/api";
-import BookingModal from "@/components/BookingModal";
+import { courtService } from "@/api";
+import BookingTable from "@/components/BookingTable";
 import { usePaginatedBookings } from "@/hooks/usePaginatedBookings";
 import { CreateBookingRequest, UserSelected } from "@/interfaces/Booking";
 import { Court } from "@/interfaces/Court";
-import { EventContentArg, EventInput } from "@fullcalendar/core/index.js";
-import interactionPlugin from "@fullcalendar/interaction";
-import FullCalendar from "@fullcalendar/react";
-import timeGridPlugin from "@fullcalendar/timegrid";
-import moment from "moment";
+import { EventContentArg } from "@fullcalendar/core/index.js";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { v4 } from "uuid";
 
 function BookingPage() {
     const [open, setOpen] = useState(false);
@@ -22,13 +17,12 @@ function BookingPage() {
     const param = useParams();
     const complexId: string = param.complexId as string;
 
-    const { events, setEvents, filter, setFilter } = usePaginatedBookings();
+    const { filter, setFilter, bookings } = usePaginatedBookings(complexId);
 
     const fetchCourt = async () => {
         if (complexId) {
             const courtsRes = await courtService.getCourtsByComplexId(complexId);
             if (courtsRes && courtsRes.length > 0) {
-                setFilter({ ...filter, courtId: courtsRes[0].id });
                 courtsRes && setCourts(courtsRes);
             }
         }
@@ -48,7 +42,7 @@ function BookingPage() {
 
     return (
         <>
-            <BookingModal
+            {/* <BookingModal
                 object={objectSelected}
                 open={open}
                 handleCancel={handleModalCancel}
@@ -149,6 +143,7 @@ function BookingPage() {
                                     startTime: startTime,
                                     endTime: endTime,
                                 };
+
                                 setActiveBooking(booking);
                                 console.log(booking);
                                 
@@ -159,8 +154,6 @@ function BookingPage() {
                                 ]);
                             }
                         }}
-                        // editable={true}
-                        // droppable={true}
                         eventClick={(e) => {
                             setEvents(events.filter((event) => event.locked || event.id !== e.event.id));
                         }}
@@ -168,16 +161,10 @@ function BookingPage() {
                         eventContent={renderEventContent}
                     />
                 </div>
-            </div>
+            </div> */}
+            <BookingTable courts={courts} bookings={bookings}></BookingTable>
         </>
     );
 }
-function renderEventContent(eventInfo: EventContentArg) {
-    return (
-        <div>
-            <b>{eventInfo.timeText}</b>
-            <i> - {eventInfo.event.title}</i>
-        </div>
-    );
-}
+
 export default BookingPage;

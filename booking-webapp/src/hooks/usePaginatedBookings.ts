@@ -1,22 +1,21 @@
 import { bookingService } from "@/api";
 import { Booking, BookingFilter, Page, Pageable } from "@/interfaces/Booking";
-import { EventInput } from "@fullcalendar/core/index.js";
 import { useEffect, useState } from "react";
 
-export type CustomEventInput = EventInput & {
-    userId?: string;
-    locked: boolean;
-};
+// export type CustomEventInput = EventInput & {
+//     userId?: string;
+//     locked: boolean;
+// };
 
-export const usePaginatedBookings = () => {
-    const [events, setEvents] = useState<CustomEventInput[]>([]);
-    const [booings, setBookings] = useState<Booking[]>([]);
+export const usePaginatedBookings = (complexId: string) => {
+    const [bookings, setBookings] = useState<Booking[]>([]);
     const [pageable, setPageable] = useState<Pageable>();
     const [filter, setFilter] = useState<BookingFilter>();
 
     const fetchBooking = async () => {
         try {
-            const bookingRes = await bookingService.getAll(filter);
+            if (!complexId) return;
+            const bookingRes = await bookingService.getAll({ ...filter, complexId });
 
             if (!bookingRes) return;
 
@@ -24,16 +23,15 @@ export const usePaginatedBookings = () => {
             setPageable(bookingRes.pageable);
             // setFilter
 
-            const eventTemp: CustomEventInput[] = bookingRes.content.map((booking) => {
-                return {
-                    locked: true,
-                    start: new Date(`${booking.startDate}T${booking.startTime}`),
-                    end: new Date(`${booking.startDate}T${booking.endTime}`),
-                    title: booking.status,
-                    id: booking.id,
-                };
-            });
-            setEvents(eventTemp);
+            // const eventTemp: CustomEventInput[] = bookingRes.content.map((booking) => {
+            //     return {
+            //         locked: true,
+            //         start: new Date(`${booking.startDate}T${booking.startTime}`),
+            //         end: new Date(`${booking.startDate}T${booking.endTime}`),
+            //         title: booking.court.name,
+            //         id: booking.id,
+            //     };
+            // });
         } catch (error) {
             console.error(error);
         }
@@ -44,9 +42,7 @@ export const usePaginatedBookings = () => {
     }, [filter]);
 
     return {
-        events,
-        setEvents,
-        booings,
+        bookings,
         setBookings,
         pageable,
         filter,
