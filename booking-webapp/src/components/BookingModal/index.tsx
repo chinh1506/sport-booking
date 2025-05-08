@@ -1,15 +1,23 @@
-import { UserSelected } from "@/interfaces/Booking";
+import { CreateBookingRequest, SlotInfor, UserSelected } from "@/interfaces/Booking";
+import { Utils } from "@/Utils";
 import React, { useState } from "react";
 
 type Props = {
-    open: boolean;
+    open: boolean ; 
     hanldeOk?: () => void;
+    setOpen?: () => void;
     handleCancel?: () => void;
-    object: UserSelected;
+    object: {
+        totalPrice: number;
+        startDate: string;
+        timeSlots: Set<SlotInfor>;
+        email?: string;
+    };
 };
 
 function BookingModal({ open, object, hanldeOk, handleCancel }: Props) {
     // const [open, setOpen]= useState(false);
+    object.timeSlots= new Set(Utils.mergeContinuousSlots(Array.from(object.timeSlots)));
 
     return (
         <div
@@ -26,39 +34,49 @@ function BookingModal({ open, object, hanldeOk, handleCancel }: Props) {
                         <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                             <div>
                                 <div>
-                                    <label className="block text-gray-700 text-sm font-bold mb-2">Field</label>
-                                    <input
-                                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                        type="text"
-                                        value={object?.field}
-                                        disabled
-                                    />
-                                </div>
-                                <div>
                                     <label className="block text-gray-700 text-sm font-bold mb-2">Date</label>
                                     <input
                                         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                         type="date"
-                                        value={object?.date}
+                                        value={object?.startDate}
+                                        readOnly
                                     />
                                 </div>
-                                <div>
+
+                                <table className="table-auto w-full border-collapse border border-gray-200 mt-4">
+                                    <thead>
+                                        <tr>
+                                            <th>Tên</th>
+                                            <th>Chi tiết</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {Array.from(object.timeSlots).map((slot: SlotInfor) => (
+                                            <tr key={slot.slotId}>
+                                                <td>{slot.courtName}</td>
+                                                <td>
+                                                    {slot.startTime}-{slot.endTime}
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                                {/* <div>
                                     <label className="block text-gray-700 text-sm font-bold mb-2">Start time</label>
                                     <input
                                         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                         type="time"
                                         value={object?.startTime}
-                                        
                                     />
-                                </div>
+                                </div> */}
 
-                                <div>
+                                {/* <div>
                                     <label className="block text-gray-700 text-sm font-bold mb-2">End time</label>
                                     <input
                                         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                         type="time"
                                     />
-                                </div>
+                                </div> */}
                             </div>
 
                             {/* <div className="sm:flex sm:items-start">

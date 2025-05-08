@@ -16,13 +16,11 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-@ToString(exclude = {"courtPrices"})
+@ToString(exclude = {"courtPrices","bookingDetails"})
 public class Court{
     @Id
     private String id;
-
     private String name;
-
     private String description;
     @Enumerated(EnumType.STRING)
     private CourtType type;
@@ -37,9 +35,14 @@ public class Court{
     @UpdateTimestamp
     @Column(name = "updated_at")
     private Date updatedAt;
+
     @OneToMany(mappedBy = "court")
     @JsonBackReference(value = "court_price")
     private List<CourtPrice> courtPrices;
+
+    @OneToMany(mappedBy = "court")
+    @JsonBackReference(value = "booking_detail_court")
+    private List<BookingDetail> bookingDetails;
 
 
 }

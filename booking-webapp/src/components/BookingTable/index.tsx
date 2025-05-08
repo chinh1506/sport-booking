@@ -1,30 +1,52 @@
 "use client";
 
-import { Booking } from "@/interfaces/Booking";
-import { Court } from "@/interfaces/Court";
+import { Booking, BookingDetail, BookingFilter, CreateBookingRequest, SlotInfor, TimeSlot } from "@/interfaces/Booking";
+import { Court, CourtPrice } from "@/interfaces/Court";
+import { Utils } from "@/Utils";
 import moment from "moment";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import BookingModal from "../BookingModal";
+import { useLoading } from "../LoadingProvider";
 
 type Props = {
     courts: Court[];
     bookings: Booking[];
+    filter: BookingFilter;
+    courtPrices: CourtPrice[];
+    bookingFunction: (booking: CreateBookingRequest) => void;
+    setFilter: React.Dispatch<React.SetStateAction<BookingFilter>>;
 };
 
-const BookingTable: React.FC<Props> = ({ courts, bookings }) => {
-    //   const courts = ["Sân 7", "Sân 8", "Sân 9", "Sân 10", "Sân 11", "Sân 12", "Sân 16", "Sân 17"];
-    const pricePerHour = 80000; // 80,000đ / giờ
+const BookingTable: React.FC<Props> = ({ courts, bookings, filter, setFilter, courtPrices, bookingFunction }) => {
+    const now = moment(new Date()).format("YYYY-MM-DD");
+    const [selectedSlots, setSelectedSlots] = useState<Set<SlotInfor>>(new Set<SlotInfor>());
+    const [date, setDate] = useState(now);
+    const [open, setOpen] = useState(false);
+    const { isLoading, setLoading } = useLoading();
 
-    const [selectedSlots, setSelectedSlots] = useState<Set<string>>(new Set());
-    const [date, setDate] = useState(moment(new Date()).format("YYYY-MM-DD"));
+    const handleModalCancel = () => {
+        setOpen(false);
+    };
 
-    const toggleSlot = (slotId: string) => {
+    useEffect(() => {
+        setSelectedSlots(new Set());
+        setFilter({ ...filter, startDate: date });
+    }, [date]);
+
+    const toggleSlot = (timeSlot: SlotInfor, locked: boolean) => {
+        if (locked) return;
         setSelectedSlots((prev) => {
             const newSet = new Set(prev);
-            if (newSet.has(slotId)) {
-                newSet.delete(slotId);
+            const slotId = timeSlot.slotId; // Sử dụng slotId làm khóa
+
+            if (Array.from(newSet).some((slot) => slot.slotId === slotId)) {
+                // Nếu slot đã tồn tại, xóa nó
+                return new Set(Array.from(newSet).filter((slot) => slot.slotId !== slotId));
             } else {
-                newSet.add(slotId);
+                // Nếu slot chưa tồn tại, thêm nó
+                newSet.add(timeSlot);
             }
+
             return newSet;
         });
     };
@@ -37,18 +59,65 @@ const BookingTable: React.FC<Props> = ({ courts, bookings }) => {
         }
         return hours;
     };
-    console.log(bookings);
-    
 
     const totalMinutes = selectedSlots.size * 30;
     const totalHours = Math.floor(totalMinutes / 60);
     const remainingMinutes = totalMinutes % 60;
-    const totalPrice = (selectedSlots.size * pricePerHour) / 2;
+    const totalPrice = Array.from(selectedSlots).reduce((total, slot) => {
+        // Find the matching court price for the selected slot
+        const courtPrice = courtPrices.find(
+            (price) =>
+                price.court.id === slot.courtId &&
+                moment(slot.startTime, "HH:mm").isBetween(
+                    moment(price.startTime, "HH:mm"),
+                    moment(price.endTime, "HH:mm"),
+                    null,
+                    "[)"
+                )
+        );
+
+        // Add the price of the slot to the total (if a matching price is found)
+        return total + (courtPrice ? courtPrice.price : 0) / 2;
+    }, 0);
+
+    const handleModelOk = () => {
+        setLoading(true);
+        try {
+            const booking: CreateBookingRequest = {
+                startDate: date,
+                email: "chinhhoang115@gmail.com",
+                timeSlots: Array.from(selectedSlots).map((slot) => ({
+                    startTime: slot.startTime,
+                    endTime: slot.endTime,
+                    courtId: slot.courtId,
+                })),
+            };
+
+            setSelectedSlots(new Set());
+            bookingFunction(booking);
+            setOpen(false);
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const hours = generateHours();
 
     return (
         <div className="w-full max-w-7xl mx-auto bg-white rounded-xl shadow-lg p-4 md:p-6 select-none">
+            <BookingModal
+                open={open}
+                handleCancel={handleModalCancel}
+                hanldeOk={handleModelOk}
+                object={{
+                    startDate: date,
+                    email: "chinhhoang115@gmail.com",
+                    totalPrice: totalPrice,
+                    timeSlots: selectedSlots,
+                }}
+            ></BookingModal>
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
                 <h1 className="text-xl md:text-2xl font-bold text-green-700">Đặt lịch ngày trực quan</h1>
@@ -93,7 +162,8 @@ const BookingTable: React.FC<Props> = ({ courts, bookings }) => {
                     </thead>
                     <tbody>
                         {courts.map((court) => {
-                            const events = bookings.filter((bkg) => bkg.court.id === court.id);
+                            const bkgDetails = bookings.map((bkg) => bkg.bookingDetails).flat(1);
+                            const events = bkgDetails.filter((bd) => bd.court?.id === court.id);
 
                             return (
                                 <tr key={court.id}>
@@ -101,16 +171,26 @@ const BookingTable: React.FC<Props> = ({ courts, bookings }) => {
                                         {court.name}
                                     </td>
                                     {hours.map((hour) => {
-                                        const slotId = `${court.id}-${hour}`;
-                                        const isSelected = selectedSlots.has(slotId);
+                                        const timeSlot: SlotInfor = {
+                                            slotId: `${court.id}_${hour}`,
+                                            courtId: court.id,
+                                            startTime: hour,
+                                            courtName: court.name,
+                                            endTime: Utils.addThirtyMinutes(hour),
+                                        };
+                                        const isSelected = Array.from(selectedSlots).some(
+                                            (slot) => slot.slotId === timeSlot.slotId
+                                        );
+                                        let isLooked = false;
                                         let isBooked = false;
 
+                                        if (filter.startDate && filter.startDate < now) {
+                                            isLooked = true;
+                                        }
+                                        // Check if the slot is already booked
                                         for (let i = 0; i < events.length; i++) {
                                             const event = events[i];
-                                            console.log(event.startTime);
-                                            console.log(hour);
-                                            
-                                            if (event.startTime <= (hour + ":00") && event.endTime >= (hour + ":00")) {
+                                            if (event.startTime <= hour + ":00" && event.endTime > hour + ":00") {
                                                 isBooked = true;
                                                 break;
                                             }
@@ -118,12 +198,16 @@ const BookingTable: React.FC<Props> = ({ courts, bookings }) => {
 
                                         return (
                                             <td
-                                                key={slotId}
+                                                key={timeSlot.courtId + "_" + timeSlot.startTime}
                                                 className={`border h-8 md:h-10 cursor-pointer hover:bg-green-100 ${
                                                     isBooked ? "bg-red-400" : isSelected ? "bg-green-300" : "bg-white"
                                                 }`}
-                                                onClick={() => toggleSlot(slotId)}
-                                            ></td>
+                                                onClick={() => toggleSlot(timeSlot, isLooked || isBooked)}
+                                            >
+                                                <p className="text-[8px]">
+                                                    {timeSlot.startTime}-{timeSlot.endTime}
+                                                </p>
+                                            </td>
                                         );
                                     })}
                                 </tr>
@@ -145,7 +229,13 @@ const BookingTable: React.FC<Props> = ({ courts, bookings }) => {
 
             {/* Nút tiếp theo */}
             <div className="mt-6">
-                <button className="w-full bg-yellow-400 hover:bg-yellow-500 text-white font-bold py-3 px-6 rounded-xl text-base md:text-lg flex items-center justify-center space-x-2">
+                <button
+                    onClick={() => {
+                        if (selectedSlots.size === 0) return;
+                        setOpen(true);
+                    }}
+                    className="w-full bg-yellow-400 hover:bg-yellow-500 text-white font-bold py-3 px-6 rounded-xl text-base md:text-lg flex items-center justify-center space-x-2"
+                >
                     <span>TIẾP THEO</span>
                     <svg className="w-5 h-5 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />

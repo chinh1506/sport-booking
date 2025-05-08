@@ -10,16 +10,16 @@ import { setCookie } from "cookies-next";
 
 export default function StoreProvider({ children }: { children: React.ReactNode }) {
     const storeRef = useRef<AppStore>(undefined);
-    // const session:CustomSession= useSession();
-    const { data, status } = useSession();
-    const jwtToken: JwtToken = { ...data };
-    console.log(jwtToken);
+  
     if (!storeRef.current) {
         // loadUserAction()
         // Create the store instance the first time this renders
         storeRef.current = makeStore();
         // console.log("Make store");
     }
+    const { data, status } = useSession();
+    const jwtToken: JwtToken = { ...data };
+    console.log(jwtToken);
     useEffect(() => {
         if (status == "authenticated") {
             if (jwtToken.error) {

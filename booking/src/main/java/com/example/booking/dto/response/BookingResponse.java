@@ -6,17 +6,20 @@ import lombok.Data;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Date;
+import java.util.List;
 
 @Data
 public class BookingResponse {
+
     private String id;
     private LocalDate startDate;
-    private Date createdAt;
-    private LocalTime startTime;
-    private LocalTime endTime;
+    private LocalDate endDate;
     private Double totalPrice;
     private BookingStatus status;
-
-    private CourtResponse court;
+    private UserResponse customer;
+    private Date createdAt;
+    private Date updatedAt;
+    private List<BookingDetailResponse> bookingDetails;
+//    private CourtResponse court;
 
 }

@@ -14,27 +14,34 @@ import java.util.List;
 public interface BookingRepository extends JpaRepository<Booking, String> {
 
     @Query(value = "select b " +
-            "from Booking as  b " +
-            "where b.startDate = :startDate and ((b.startTime >= :startTime and b.startTime < :endTime) " +
-            "or " +
-            "(b.endTime >= :startTime and b.endTime < :endTime))")
-    Booking findCourtByTime(LocalDate startDate, LocalTime startTime, @Param("endTime") LocalTime endTime);
+            "from Booking b join b.bookingDetails bd join bd.court c join c.complex cx " +
+            "where (:complexId is null or cx.id= :complexId) " +
+            "and (cast(:startDate as date) is null or b.startDate = :startDate)")
+    Page<Booking> findAllByConditions(String complexId, LocalDate startDate,
+                                                 Pageable pageable);
 
+//    @Query(value = "select b " +
+//            "from Booking as  b " +
+//            "where b.startDate = :startDate and ((b.startTime >= :startTime and b.startTime < :endTime) " +
+//            "or " +
+//            "(b.endTime >= :startTime and b.endTime < :endTime))")
+//    Booking findCourtByTime(LocalDate startDate, LocalTime startTime, @Param("endTime") LocalTime endTime);
+//
     @Query(value = "select b " +
-            "from Booking as b " +
-            "where b.court.id = :courtId and b.startDate = :startDate and ((b.startTime >= :startTime and b.startTime < :endTime) " +
+            "from Booking as b join b.bookingDetails bd join bd.court c " +
+            "where c.id = :courtId and b.startDate = :startDate and ((bd.startTime >= :startTime and bd.startTime < :endTime) " +
             "or " +
-            "(b.endTime > :startTime and b.endTime <= :endTime))")
+            "(bd.endTime > :startTime and bd.endTime <= :endTime))")
     List<Booking> findCourtByTimeAndCourtId(String courtId, LocalDate startDate, LocalTime startTime, @Param("endTime") LocalTime endTime);
 
-    List<Booking> findAllByStartDateAndCourt_Id(LocalDate startDate, String sportCourt_id);
+//    List<Booking> findAllByStartDateAndCourt_Id(LocalDate startDate, String sportCourt_id);
 
-    @Query(value = "select b " +
-            "from Booking b " +
-            "where (cast(:startDate as date) is null or b.startDate = :startDate) " +
-            "and (:courtId is null or b.court.id = :courtId) " +
-            "and (:complexId is null or b.court.complex.id = :complexId)")
-    Page<Booking> findAllBookingPage(LocalDate startDate, String courtId, String complexId, Pageable pageable);
+//    @Query(value = "select b " +
+//            "from Booking b " +
+//            "where (cast(:startDate as date) is null or b.startDate = :startDate) " +
+//            "and (:courtId is null or b.court.id = :courtId) " +
+//            "and (:complexId is null or b.court.complex.id = :complexId)")
+//    Page<Booking> findAllBookingPage(LocalDate startDate, String courtId, String complexId, Pageable pageable);
 
 
 }

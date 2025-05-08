@@ -1,7 +1,9 @@
 package com.example.booking.config;
 
+import com.example.booking.dto.response.BookingResponse;
 import com.example.booking.dto.response.ComplexResponse;
 import com.example.booking.dto.response.CourtResponse;
+import com.example.booking.entity.Booking;
 import com.example.booking.entity.Complex;
 import com.example.booking.entity.Court;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -62,6 +64,7 @@ public class ApplicationContext {
         });
 
         modelMapper.typeMap(Court.class, CourtResponse.class);
+        modelMapper.typeMap(Booking.class, BookingResponse.class);
 //                .addMappings(mapper -> {
 //            mapper.map(Court::getComplex, CourtResponse::setComplex);
 //        });

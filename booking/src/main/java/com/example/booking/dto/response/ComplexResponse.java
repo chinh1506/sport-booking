@@ -28,10 +28,4 @@ public class ComplexResponse {
     private Address address;
 
 
-//    public static TypeMap<Complex, ComplexResponse> getTypeMap(ModelMapper modelMapper) {
-//        return modelMapper.typeMap(Complex.class,ComplexResponse.class).addMappings(mapper->{
-//            mapper.map(Complex::getAddress,ComplexResponse::setAddress);
-//            mapper.map(Complex::getOwner,ComplexResponse::setOwner);
-//        });
-//    }
 }

@@ -21,6 +21,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString(exclude = {"courts"})
+@EqualsAndHashCode(of = "id")
 public class Complex {
     @Id
     private String id;

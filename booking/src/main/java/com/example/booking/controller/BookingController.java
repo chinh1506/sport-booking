@@ -47,44 +47,28 @@ public class BookingController {
                 .order(order)
                 .courtId(courtId)
                 .build();
-//        log.info("bookings count: {}", params);
         Page<Booking> bookings = this.bookingService.getAll(params);
         Page<BookingResponse> bookingsRes = bookings.map(o -> modelMapper.map(o, BookingResponse.class));
-
-        log.info("bookings count: {}", bookings.getTotalElements());
-//        List<BookingResponse> bookingsRes = bookings.stream()
-//                .map(o -> modelMapper.map(o, BookingResponse.class))
-//                .toList();
-
-
-        Page<BookingResponse> responsePage= Page.empty(bookings.getPageable());
-
-
         return RestResponse.success(bookingsRes);
     }
 
     @PostMapping()
     public RestResponse<BookingResponse> bookCourt(@Valid @RequestBody CreateBookingRequest createBookingRequest) throws Exception {
-        Booking booking = this.bookingService.bookingCourt(createBookingRequest.getCourtId()
-                , createBookingRequest.getStartDate()
-                , null
-                , createBookingRequest.getStartTime()
-                , createBookingRequest.getEndTime()
-                , createBookingRequest.getEmail());
+        Booking booking = this.bookingService.bookingCourt(createBookingRequest);
 
         return RestResponse.success(modelMapper.map(booking, BookingResponse.class));
     }
 
-    @MessageMapping("/courts")
-    @SendTo("/topic/courts")
-    public RestResponse<BookingResponse> bookingCourtRealtime(@Valid @RequestBody CreateBookingRequest createBookingRequest) throws Exception {
-        Booking booking = this.bookingService.bookingCourt(createBookingRequest.getCourtId()
-                , createBookingRequest.getStartDate()
-                , null
-                , createBookingRequest.getStartTime()
-                , createBookingRequest.getEndTime()
-                , createBookingRequest.getEmail());
-        return RestResponse.success(modelMapper.map(booking, BookingResponse.class));
-    }
+//    @MessageMapping("/courts")
+//    @SendTo("/topic/courts")
+//    public RestResponse<BookingResponse> bookingCourtRealtime(@Valid @RequestBody CreateBookingRequest createBookingRequest) throws Exception {
+//        Booking booking = this.bookingService.bookingCourt(createBookingRequest.getCourtId()
+//                , createBookingRequest.getStartDate()
+//                , null
+//                , createBookingRequest.getStartTime()
+//                , createBookingRequest.getEndTime()
+//                , createBookingRequest.getEmail());
+//        return RestResponse.success(modelMapper.map(booking, BookingResponse.class));
+//    }
 
 }

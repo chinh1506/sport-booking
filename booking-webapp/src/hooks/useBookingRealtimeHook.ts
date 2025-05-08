@@ -1,4 +1,4 @@
-import { stompClient } from "@/app/Utils";
+import { stompClient } from "@/Utils";
 import { useEffect } from "react";
 
 export const useBookingRealtimeHook = () => {

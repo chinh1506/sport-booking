@@ -1,12 +1,17 @@
 package com.example.booking.service.implement;
 
+import com.example.booking.dto.request.CreateBookingRequest;
 import com.example.booking.entity.*;
+import com.example.booking.repository.BookingDetailRepository;
 import com.example.booking.repository.BookingRepository;
+import com.example.booking.repository.ComplexRepository;
 import com.example.booking.repository.CourtPriceRepository;
 import com.example.booking.service.BookingService;
 import com.example.booking.util.Utilities;
 import com.example.booking.util.filterparam.BookingParam;
 import com.example.booking.util.filterparam.SortOrder;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,10 +29,15 @@ import java.util.List;
 public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
     private final CourtPriceRepository courtPriceRepository;
+    private final BookingDetailRepository bookingDetailRepository;
+    private final ComplexRepository complexRepository;
 
-    public BookingServiceImpl(BookingRepository bookingRepository, CourtPriceRepository courtPriceRepository) {
+
+    public BookingServiceImpl(BookingRepository bookingRepository, CourtPriceRepository courtPriceRepository, BookingDetailRepository bookingDetailRepository, ComplexRepository complexRepository) {
         this.bookingRepository = bookingRepository;
         this.courtPriceRepository = courtPriceRepository;
+        this.bookingDetailRepository = bookingDetailRepository;
+        this.complexRepository = complexRepository;
     }
 
     @Override
@@ -39,36 +49,97 @@ public class BookingServiceImpl implements BookingService {
         Pageable pageable = PageRequest.of(param.getPage(), param.getLimit(), sort);
 
         LocalDate startDate = param.getStartDate();
+        Page<Booking> bookings = this.bookingRepository.findAllByConditions(param.getComplexId(), startDate, pageable);
 
-
-        return this.bookingRepository.findAllBookingPage(startDate, param.getCourtId(),param.getComplexId(), pageable);
+        bookings.forEach(booking -> {
+            List<BookingDetail> bookingDetails = this.bookingDetailRepository.findAllByBooking_Id(booking.getId());
+            booking.setBookingDetails(bookingDetails);
+        });
+        return bookings;
     }
 
     @Override
-    public Booking bookingCourt(String courtId, LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime, String userId) throws Exception {
+    public Booking bookingCourt(CreateBookingRequest createBookingRequest) throws Exception {
         Booking booking = Booking.builder()
                 .id(Utilities.generateID("BG"))
-                .startDate(startDate)
-                .endDate(endDate)
-                .startTime(startTime)
-                .endTime(endTime)
+                .startDate(createBookingRequest.getStartDate())
+                .endDate(createBookingRequest.getStartDate())
                 .status(BookingStatus.PENDING)
-                .court(Court.builder().id(courtId).build())
                 .build();
+        List<CreateBookingRequest.TimeSlot> timeSlots = CreateBookingRequest.TimeSlot.mergeContinuousSlots(createBookingRequest.getTimeSlots());
+        log.info("Time slots: {}", timeSlots);
+        Complex complex = null;
 
-        List<Booking> bookingFound = this.bookingRepository.findCourtByTimeAndCourtId(courtId, startDate, startTime, endTime);
-        if (bookingFound != null && !bookingFound.isEmpty()) {
-            throw new Exception("This court not available in this time.");
-        }
-        List<CourtPrice> courtPrices = new ArrayList<>();
+        // check slot is available or not
+        for (int i = 0; i < timeSlots.size(); i++) {
+            CreateBookingRequest.TimeSlot timeSlot = timeSlots.get(i);
+            List<Booking> bookingFound = this.bookingRepository
+                    .findCourtByTimeAndCourtId(timeSlot.getCourtId(), booking.getStartDate(), timeSlot.getStartTime(), timeSlot.getEndTime());
 
-        while (!endTime.equals(startTime)) {
-            endTime = endTime.minusMinutes(30);
-            CourtPrice courtPrice = this.courtPriceRepository.findCourtPriceByStartTime(endTime);
-            courtPrices.add(courtPrice);
+            if (bookingFound != null && !bookingFound.isEmpty()) {
+                throw new Exception("This court not available in this time.");
+            }
+            Complex foundComplex = this.complexRepository.findComplexByCourtId(timeSlot.getCourtId());
+            assert foundComplex != null;
+            if (i != 0 && !foundComplex.equals(complex)) {
+                throw new Exception("Your booking is not valid");
+
+            } else {
+                complex = foundComplex;
+            }
         }
-        log.info("{}", courtPrices);
-        booking.setTotalPrice(courtPrices.stream().map(CourtPrice::getPrice).reduce(0.00, Double::sum) / 2);
-        return this.bookingRepository.save(booking);
+
+        // create booking details
+        List<CourtPrice> courtPricesDb = this.courtPriceRepository.findAllByCourt_Complex_Id(complex.getId());
+        ArrayList<BookingDetail> bookingDetails = new ArrayList<>();
+
+        //Calculate total price for booking
+        double totalPrice = 0.0;
+        for (CreateBookingRequest.TimeSlot timeSlot : timeSlots) {
+            LocalTime endTime = timeSlot.getEndTime();
+            LocalTime startTime= timeSlot.getStartTime();
+            double lineTotal = 0.0;
+
+
+            while (!endTime.equals(startTime)) {
+                endTime = endTime.minusMinutes(30);
+                for (CourtPrice courtPrice : courtPricesDb){
+                    if (courtPrice.getStartTime().equals(startTime)|| courtPrice.getStartTime().isBefore(startTime) && courtPrice.getEndTime().isAfter(startTime)){
+                        lineTotal+=courtPrice.getPrice();
+                        break;
+                    }
+                }
+            }
+            BookingDetail bkgd = BookingDetail.builder()
+                    .id(Utilities.generateID("BKGD"))
+                    .court(Court.builder().id(timeSlot.getCourtId()).build())
+                    .booking(booking)
+                    .startTime(timeSlot.getStartTime())
+                    .endTime(timeSlot.getEndTime())
+                    .totalPrice(lineTotal / 2)
+                    .build();
+            totalPrice+=lineTotal;
+            bookingDetails.add(bkgd);
+        }
+        booking.setTotalPrice(totalPrice);
+        booking.setBookingDetails(bookingDetails);
+        booking=this.bookingRepository.save(booking);
+
+        return booking;
     }
+
+    @Override
+    public List<Booking> findByComplexIdAndStartDate(String complexId, LocalDate startDate) {
+//        bookings= this.bookingRepository.
+        return List.of();
+    }
+
+//    private double getTotalPrice(List<BookingDetail> bookingDetails) {
+//        double totalPrice = 0.0;
+//        for (BookingDetail bookingDetail : bookingDetails) {
+//            totalPrice += bookingDetail.getTotalPrice();
+//        }
+//        return totalPrice;
+//    }
+
 }
