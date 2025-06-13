@@ -1,6 +1,7 @@
 package com.example.booking.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -26,7 +27,7 @@ public class Court{
     private CourtType type;
     @ManyToOne
     @JoinColumn(name = "complex_id")
-    @JsonBackReference
+    @JsonManagedReference(value = "complex_court")
     private Complex complex;
 
     @CreationTimestamp

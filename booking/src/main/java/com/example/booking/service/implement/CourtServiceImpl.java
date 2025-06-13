@@ -5,18 +5,26 @@ import com.example.booking.entity.CourtPrice;
 import com.example.booking.repository.CourtPriceRepository;
 import com.example.booking.repository.CourtRepository;
 import com.example.booking.service.CourtService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class CourtServiceImpl implements CourtService {
     private final CourtRepository courtRepository;
     private final CourtPriceRepository courtPriceRepository;
+    private final RedisTemplate<String, String> redisTemplate;
+    private final ObjectMapper objectMapper;
 
-    public CourtServiceImpl(CourtRepository courtRepository, CourtPriceRepository courtPriceRepository) {
+    public CourtServiceImpl(CourtRepository courtRepository, CourtPriceRepository courtPriceRepository, RedisTemplate<String,String> redisTemplate, ObjectMapper objectMapper) {
         this.courtRepository = courtRepository;
         this.courtPriceRepository = courtPriceRepository;
+        this.redisTemplate = redisTemplate;
+        this.objectMapper = objectMapper;
     }
 
     @Override
@@ -25,8 +33,11 @@ public class CourtServiceImpl implements CourtService {
     }
 
     @Override
-    public Court getById(int id) {
-        return this.courtRepository.findById(id).get();
+    public Court getById(String id) {
+
+
+        Court court = this.courtRepository.findById(id).get();
+        return court;
     }
 
     @Override

@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface CourtRepository extends JpaRepository<Court, Integer> {
+public interface CourtRepository extends JpaRepository<Court, String> {
 
     List<Court> findByComplex_Id(String complex_Id);
 }

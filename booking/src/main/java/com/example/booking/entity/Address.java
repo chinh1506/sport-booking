@@ -26,7 +26,6 @@ public class Address {
     private Double latitude;
     @Column
     private Double longitude;
-
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private Date createdAt;

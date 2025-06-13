@@ -33,8 +33,6 @@ public class User implements Serializable {
     private String firstName;
     @Column(name = "last_name")
     private String lastName;
-//    @Column(name = "last_name")
-//    private String fullName;
     private String username;
     private String email;
     private String phone;
@@ -42,17 +40,14 @@ public class User implements Serializable {
     @Column(name = "email_verified", nullable = true)
     private boolean emailVerified;
 
-
-
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonIgnore
     @JsonBackReference(value = "user_role")
     private List<UserRole> userRoles;
 
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
-    @JsonBackReference("complex_owner")
-    @JsonIgnore
-    private Set<Complex> complexes;
+    @JsonBackReference(value = "complex_owner")
+    private List<Complex> complexes;
 
     @OneToMany(mappedBy = "customer")
     @JsonBackReference("booking_customer")

@@ -8,11 +8,11 @@ import com.example.booking.entity.Court;
 import com.example.booking.entity.CourtPrice;
 import com.example.booking.service.CourtService;
 import com.example.booking.util.RestResponse;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.modelmapper.ModelMapper;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,10 +24,33 @@ public class CourtController {
 
     private final CourtService courtService;
     private final ModelMapper modelMapper;
+    private final RedisTemplate<String, String> redisTemplate;
+    private final ObjectMapper  objectMapper;
 
-    public CourtController(CourtService courtService, ModelMapper modelMapper) {
+    public CourtController(CourtService courtService, ModelMapper modelMapper, RedisTemplate<String, String> redisTemplate, ObjectMapper objectMapper) {
         this.courtService = courtService;
         this.modelMapper = modelMapper;
+        this.redisTemplate = redisTemplate;
+        this.objectMapper = objectMapper;
+    }
+
+    @GetMapping(value = "{id}")
+    public RestResponse<CourtResponse> getCourtById(@PathVariable String id) throws JsonProcessingException {
+        String courtCache = this.redisTemplate.opsForValue().get(id);
+//        System.out.println("courtCache: " + courtCache);
+        if (courtCache != null) {
+            System.out.println("courtCache: " + courtCache);
+
+            CourtResponse courtResponse = this.objectMapper.readValue(courtCache, CourtResponse.class);
+
+            return RestResponse.success(courtResponse);
+        }
+
+
+        Court court = this.courtService.getById(id);
+        CourtResponse courtResponse = this.modelMapper.map(court, CourtResponse.class);
+        this.redisTemplate.opsForValue().set(id, this.objectMapper.writeValueAsString(courtResponse));
+        return RestResponse.success( courtResponse);
     }
 
     @GetMapping("complexes")

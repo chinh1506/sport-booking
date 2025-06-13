@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { Session } from "next-auth";
 import { Roboto } from "next/font/google";
 import "./globals.css";
+// import "leaflet/dist/leaflet.css"
 import { LoadingProvider } from "@/components/LoadingProvider";
 import GlobalLoading from "@/components/GlobalLoading";
 

@@ -24,8 +24,6 @@ public class ComplexResponse {
     private LocalTime openTime;
     private LocalTime closeTime;
 //    @JsonIgnore
-    private User owner;
-    private Address address;
-
-
+    private UserResponse owner;
+//    private Address address;
 }

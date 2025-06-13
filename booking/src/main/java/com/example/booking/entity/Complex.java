@@ -1,6 +1,7 @@
 package com.example.booking.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -40,11 +41,12 @@ public class Complex {
 
     @ManyToOne
     @JoinColumn(name = "owner_id")
-    @JsonManagedReference("complex_owner")
+//    @JsonManagedReference(value = "complex_owner")
+    @JsonIgnore
     private User owner;
 
     @OneToMany(mappedBy = "complex")
-    @JsonBackReference()
+    @JsonBackReference(value = "complex_court")
     private List<Court> courts;
 
     @OneToOne(cascade = CascadeType.ALL)
