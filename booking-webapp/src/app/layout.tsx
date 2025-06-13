@@ -15,8 +15,9 @@ const roboto = Roboto({
 });
 
 export const metadata: Metadata = {
-    title: "NextJS Tailwind Blog Posts Page",
+    title: "Booking App",
     description: "hello",
+    
 };
 
 export default function RootLayout({ children, session }: { children: React.ReactNode; session: Session }) {

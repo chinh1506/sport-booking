@@ -32,6 +32,7 @@ public class SecurityConfig {
                 "/auth/exchange-token",
                 "/auth/refresh-token",
                 "/ws/**",
+                "/complexes/**"
         };
 
         http.csrf(AbstractHttpConfigurer::disable);

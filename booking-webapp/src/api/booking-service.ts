@@ -1,6 +1,7 @@
 import { AxiosInstance } from "axios";
 import axiosClient from "./axios-client";
-import { Booking, BookingFilter, CreateBookingRequest, Page } from "@/interfaces/Booking";
+import { Booking, BookingFilter, CreateBookingRequest} from "@/interfaces/Booking";
+import { Page } from "@/interfaces/Page";
 
 class BookingService {
     private readonly URL = "/bookings";

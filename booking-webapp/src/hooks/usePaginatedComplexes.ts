@@ -1,5 +1,6 @@
 import { bookingService } from "@/api";
 import { Booking, BookingFilter, CreateBookingRequest } from "@/interfaces/Booking";
+import { Complex, ComplexFilter } from "@/interfaces/Complex";
 import { Pageable } from "@/interfaces/Page";
 import { useEffect, useState } from "react";
 
@@ -8,17 +9,16 @@ import { useEffect, useState } from "react";
 //     locked: boolean;
 // };
 
-export const usePaginatedBookings = (complexId: string) => {
-    const [bookings, setBookings] = useState<Booking[]>([]);
+export const usePaginatedComplexes = (complexId: string) => {
+    const [complexes, setComplexes] = useState<Complex[]>([]);
     const [pageable, setPageable] = useState<Pageable>();
-    const [filter, setFilter] = useState<BookingFilter>({});
+    const [filter, setFilter] = useState<ComplexFilter>({});
 
     const fetchBooking = async () => {
         try {
-            if (!complexId || !filter.startDate) return;
             const bookingRes = await bookingService.getAll({ ...filter, complexId });
             if (!bookingRes) return;
-            setBookings(bookingRes.content);
+            // setBookings(bookingRes.content);
             setPageable(bookingRes.pageable);
         } catch (error) {
             console.error(error);
@@ -35,7 +35,7 @@ export const usePaginatedBookings = (complexId: string) => {
         
             const bookingRes = await bookingService.bookingCourt(booking);
             if(!bookingRes) return;
-            setBookings((prevBookings) => [...prevBookings, bookingRes]);
+            // setBookings((prevBookings) => [...prevBookings, bookingRes]);
  
         } catch (error) {
             console.error(error);
@@ -43,8 +43,6 @@ export const usePaginatedBookings = (complexId: string) => {
     }
 
     return {
-        bookings,
-        setBookings,
         pageable,
         filter,
         setFilter,

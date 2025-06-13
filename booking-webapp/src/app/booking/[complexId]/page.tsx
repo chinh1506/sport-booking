@@ -13,7 +13,7 @@ import { useEffect, useState } from "react";
 function BookingPage() {
 
     const [courts, setCourts] = useState<Court[]>([]);
-    const [activeBooking, setActiveBooking] = useState<CreateBookingRequest>();
+    // const [activeBooking, setActiveBooking] = useState<CreateBookingRequest>();
     // const [selectedCourtId, setSelectedCourtId]= useState()
     const param = useParams();
     const complexId: string = param.complexId as string;
