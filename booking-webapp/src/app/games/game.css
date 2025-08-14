@@ -1,0 +1,102 @@
+.llm-game-container {
+  background: linear-gradient(135deg, var(--color-primary-bg) 0%, #ffffff 50%, var(--color-primary-bg) 100%);
+}
+
+.sidebar-header {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+}
+
+.score-display {
+  background: linear-gradient(135deg, var(--color-primary-light) 0%, var(--color-primary) 100%);
+}
+
+.game-button-selected {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+}
+
+.game-controls-bg {
+  background-color: var(--color-primary-bg);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary) 100%);
+}
+
+.btn-secondary {
+  background-color: var(--color-primary-dark);
+}
+
+.btn-secondary:hover {
+  background-color: var(--color-primary);
+}
+
+.math-quiz-bg {
+  background: linear-gradient(135deg, var(--color-primary-bg) 0%, #ffffff 50%, var(--color-primary-bg) 100%);
+}
+
+.quiz-answer-selected {
+  background: linear-gradient(135deg, var(--color-primary-light) 0%, var(--color-primary) 100%);
+  border-color: var(--color-primary);
+}
+
+.quiz-answer-hover:hover {
+  background-color: var(--color-primary-bg);
+  border-color: var(--color-primary);
+}
+
+.next-question-btn {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+}
+
+.word-game-header {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+}
+
+.quiz-master-header {
+  background: linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary) 100%);
+}
+
+.info-box {
+  background-color: var(--color-primary-bg);
+  border-color: var(--color-primary-light);
+}
+
+.text-primary {
+  color: var(--color-primary);
+}
+
+.text-primary-dark {
+  color: var(--color-primary-dark);
+}
+
+.text-subtle {
+  color: var(--color-primary-light);
+}
+
+.mobile-score {
+  color: var(--color-primary);
+}
+
+.game-icon-selected {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.game-icon-default {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.transition-custom {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-scale:hover {
+  transform: scale(1.02);
+}
+
+.hover-scale-105:hover {
+  transform: scale(1.05);
+}

@@ -1,12 +1,11 @@
-import MySessionProvider from "@/components/MySessionProvider";
-import StoreProvider from "@/components/StoreProvider";
 import type { Metadata } from "next";
-import { Session } from "next-auth";
 import { Roboto } from "next/font/google";
 import "./globals.css";
 // import "leaflet/dist/leaflet.css"
 import { LoadingProvider } from "@/components/LoadingProvider";
 import GlobalLoading from "@/components/GlobalLoading";
+import { getAuthSession } from "./api/auth/[...nextauth]/auth";
+import Providers from "@/components/Providers";
 
 const roboto = Roboto({
     subsets: ["latin"],
@@ -17,22 +16,19 @@ const roboto = Roboto({
 export const metadata: Metadata = {
     title: "Booking App",
     description: "hello",
-    
 };
 
-export default function RootLayout({ children, session }: { children: React.ReactNode; session: Session }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+    const session = await getAuthSession();
+
     return (
-        <MySessionProvider session={session}>
-            <StoreProvider>
-                <html lang="en">
-                    <body className={roboto.className}>
-                        <LoadingProvider>
-                            <GlobalLoading />
-                            {children}
-                        </LoadingProvider>
-                    </body>
-                </html>
-            </StoreProvider>
-        </MySessionProvider>
+        <html lang="en">
+            <body className={roboto.className}>
+                <Providers session={session}>
+                    <GlobalLoading />
+                    {children}
+                </Providers>
+            </body>
+        </html>
     );
 }
